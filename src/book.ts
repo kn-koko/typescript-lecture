@@ -1,27 +1,27 @@
 export class Book {
   private readonly title: string;
   private readonly author: string;
-  private isBorrowed: boolean; // 貸し出し中かどうか
+  private stock: number; // 在庫
 
-  constructor(title: string, author: string) {
+  constructor(title: string, author: string, stock: number) {
     this.title = title;
     this.author = author;
-    this.isBorrowed = false;
+    this.stock = stock;
   }
 
-  public borrow(): void {
-    this.isBorrowed = true;
+  public borrow(amount: number): boolean {
+    if (this.stock < amount) {
+      return false;
+    }
+    this.stock -= amount;
+    return true;
   }
 
-  public returnBook(): void {
-    this.isBorrowed = false;
+  public returnBook(amount: number): void {
+    this.stock += amount;
   }
 
   public getStatus(): string {
-    if (this.isBorrowed) {
-      return `貸出中: ${this.title} (${this.author})`
-    } else {
-      return `在庫あり: ${this.title} (${this.author})`
-    }
+    return `${this.title} (${this.author}) : ${this.stock} 冊`
   }
 }
