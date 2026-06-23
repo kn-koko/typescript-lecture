@@ -2,10 +2,11 @@ import { Character } from "./character";
 
 export class Enemy extends Character {
   //TODO: maxHp プロパティを追加する
-    maxHP: number
+    maxHp: number
   //TODO: maxHp プロパティの初期化
   constructor(name: string, hp: number) {
     super(name,hp);
+    this.maxHp = hp;
   }
 
   //TODO: maxHp に対する現在の hp の割合を返す getHpRatio メソッドを追加する
