@@ -1,7 +1,7 @@
 import { Character } from './character.ts';
 
 export class Mage extends Character {
-  castSpell() {
+  override attack() {
     console.log(`${this.name}は魔法を唱えた！`);
   }
 }

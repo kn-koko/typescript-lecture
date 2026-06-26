@@ -1,7 +1,14 @@
 import { Character } from './character.ts';
 
 export class Warrior extends Character {
-  attack() {
-    return `${this.name}は剣で攻撃した！`
+  private weapon: string;
+
+  constructor(name: string, hp: number, weapon: string) {
+    super(name, hp); // super() <- 継承元 (character) の constructor
+    this.weapon = weapon;
+  };
+
+  override attack() {
+    console.log(`${this.name}は${this.weapon}で攻撃した！`);
   };
 }
