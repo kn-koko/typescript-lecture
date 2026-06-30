@@ -1,9 +1,16 @@
-export const PI = 3.14159;
+import { Character } from "./character";
 
-export function add(a: number, b: number): number {
-  return a + b;
+
+function battle(opponent1: Character, opponent2: Character) {
+  
 }
 
-export default function multiply(a: number, b: number): number {
-  return a * b;
-}
+// export const PI = 3.14159;
+
+// export function add(a: number, b: number): number {
+//   return a + b;
+// }
+
+// export default function multiply(a: number, b: number): number {
+//   return a * b;
+// }
