@@ -21,5 +21,6 @@ export abstract class Character {
     return this.hp <= 0;
   }
 
-  abstract attack(): void
+  // 攻撃する相手を引数に取る
+  abstract attack(opponent: Character): void
 }
