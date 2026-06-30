@@ -16,5 +16,10 @@ export abstract class Character {
     this.hp -= damage;
   }
 
+  // HP が 0 以下かどうかを返す
+  isDead(): boolean {
+    return this.hp <= 0;
+  }
+
   abstract attack(): void
 }
