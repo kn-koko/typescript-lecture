@@ -11,5 +11,10 @@ export abstract class Character {
     console.log(`${this.name}: HP ${this.hp}`);
   }
 
+  // ダメージを受ける takeDamage メソッドを追加する
+  takeDamage(damage: number): void {
+    this.hp -= damage;
+  }
+
   abstract attack(): void
 }
