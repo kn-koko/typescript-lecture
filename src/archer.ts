@@ -13,8 +13,10 @@ export class Archer extends Character {
       console.log(`${this.name} は矢がない!`);
       return;
     }
-    this.arrows--;
-    console.log(`${this.name} は矢を放った!`);
+    this.arrows = this.arrows - 1;
+    console.log(
+      `${this.name} は矢を放った! 残りの矢の本数は${this.arrows}本だ`,
+    );
 
     opponent.takeDamage(this.power);
   }
