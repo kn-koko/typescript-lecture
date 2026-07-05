@@ -13,6 +13,10 @@ export abstract class Character {
     console.log(`${this.name}: HP ${this.hp}`);
   }
 
+  getName(): string {
+    return this.name;
+  }
+
   abstract attack(opponent: Character): void;
 
   //TODO: ダメージを受ける takeDamage メソッドを追加する
