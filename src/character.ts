@@ -16,6 +16,7 @@ export abstract class Character {
   getName(): string {
     return this.name;
   }
+  //他のところから、安全に name を取得できるようにするため
 
   abstract attack(opponent: Character): void;
 
