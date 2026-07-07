@@ -18,11 +18,16 @@ export abstract class Character {
   }
   //他のところから、安全に name を取得できるようにするため
 
+  //攻撃するために相手を引数に取る
   abstract attack(opponent: Character): void;
 
   //TODO: ダメージを受ける takeDamage メソッドを追加する
   takeDamage(damage: number): void {
     this.hp = this.hp - damage;
+    //もしHPが0を下回った場合、0に固定する
+    if (this.hp < 0) {
+      this.hp = 0;
+    }
   }
 
   isDead(): boolean {

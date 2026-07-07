@@ -21,6 +21,7 @@ export class Enemy extends Character {
   override attack(opponent: Character): void {
     if (this.getHpRatio() <= 0.3) {
       console.log(`${this.name}は必死に抵抗している!`);
+      opponent.takeDamage(this.power * 3);
     } else {
       console.log(`${this.name}は攻撃してきた!`);
       opponent.takeDamage(this.power);
