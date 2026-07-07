@@ -8,7 +8,11 @@ export class Warrior extends Character {
     this.weapon = weapon;
   };
 
-  override attack() {
+  override attack(opponent: Character) {
     console.log(`${this.name}は${this.weapon}で攻撃した！`);
+
+    // opponent は他人なので protected だとアクセスできない
+    // hp プロパティを直接触らずに opponent の hp を減らす必要がある
+    opponent.hp -= 30;
   };
 }
