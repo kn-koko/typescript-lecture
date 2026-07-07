@@ -7,13 +7,22 @@ export abstract class Character {
     this.hp = hp;
   }
 
+  getName() {
+    return this.name;
+  }
+
   showStatus() {
     console.log(`${this.name}: HP ${this.hp}`);
   }
 
   // ダメージを受ける takeDamage メソッドを追加する
   takeDamage(damage: number): void {
-    this.hp -= damage;
+    const resultHp = this.hp - damage;
+    if (resultHp < 0) {
+      this.hp = 0;
+    } else {
+      this.hp = resultHp;
+    }
   }
 
   // HP が 0 以下かどうかを返す
