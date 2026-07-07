@@ -14,24 +14,14 @@ export class Enemy extends Character {
   getHpRatio(): number {
     return this.hp / this.maxHp;
   }
-  
-  // //TODO: ダメージを受ける takeDamage メソッドを追加する
-  // takeDamage(damage: number): void {
-  //   this.hp -= damage;
-  //   if (this.hp < 0) {
-  //       this.hp = 0;
-  //   }
-  //   }
 
-  //TODO: 残り HP が 30% 以下の場合、行動を変化させる
-  // 通常時 : name + "は攻撃してきた！"
-  // 残り HP が 30% 以下 : name + "は必死に抵抗している！"
   override attack(opponent: Character): void {
-    opponent.takeDamage(this.power);
     if (this.getHpRatio() <= 0.3) {
-        console.log(`${this.name}は必死に抵抗している!`)
+      console.log(`${this.name}は必死に抵抗している!`)
+      opponent.takeDamage(this.power);
     } else {
     console.log(`${this.name}は攻撃してきた!`)
-    }
+    opponent.takeDamage(this.power * 2);
+  }
   }
 }
