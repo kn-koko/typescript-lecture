@@ -18,6 +18,7 @@ export abstract class Character {
   }
   //他のところから、安全に name を取得できるようにするため
 
+  //攻撃するために相手を引数に取る
   abstract attack(opponent: Character): void;
 
   //TODO: ダメージを受ける takeDamage メソッドを追加する
