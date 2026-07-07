@@ -6,15 +6,15 @@ import { battle } from "./battle";
 
 // const character = new Character("太郎", 200); // abstract class はインスタンス化出来ないのでエラーが出る
 
-const slime = new Enemy("スライム", 100, 10);
+const slime = new Enemy("スライム", 150, 10);
 slime.showStatus();
 slime.takeDamage(0);
 
-const warrior = new Warrior("アーサー", 100, "エクスカリバー", 35);
+const warrior = new Warrior("アーサー", 100, "エクスカリバー", 30);
 warrior.showStatus();
 const mage = new Mage("メディア", 80, 40);
 mage.showStatus();
-const archer = new Archer("エミヤ", 130, 3, 30);
+const archer = new Archer("エミヤ", 130, 3, 20);
 archer.showStatus();
 
 //const party = [warrior, mage, archer];
