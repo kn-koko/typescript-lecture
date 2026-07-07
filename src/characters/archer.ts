@@ -8,12 +8,13 @@ export class Archer extends Character {
     this.arrows = arrows;
   };
 
-  attack() {
+  attack(opponent: Character) {
     if (this.arrows <= 0) {
       console.log(`${this.name} は矢がない!`);
       return;
     }
     this.arrows--;
+    opponent.takeDamage(10);
     console.log(`${this.name} は矢を放った!`);
   }
 }

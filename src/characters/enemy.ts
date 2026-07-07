@@ -15,11 +15,13 @@ export class Enemy extends Character {
 
   // 通常時 : name + "は攻撃してきた！"
   // 残り HP が 30% 以下 : name + "は必死に抵抗している！"
-  attack(): void {
+  attack(opponent: Character): void {
     if (this.getHpRatio() > 0.3) {
       console.log(`${this.name}は攻撃してきた！`);
+      opponent.takeDamage(10);
     } else {
       console.log(`${this.name}は必死に抵抗している！`);
+      opponent.takeDamage(30);
     }
 
   }

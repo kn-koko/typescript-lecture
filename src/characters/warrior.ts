@@ -13,6 +13,6 @@ export class Warrior extends Character {
 
     // opponent は他人なので protected だとアクセスできない
     // hp プロパティを直接触らずに opponent の hp を減らす必要がある
-    opponent.hp -= 30;
+    opponent.takeDamage(20);
   };
 }
