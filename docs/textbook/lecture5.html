@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 5. 継承・抽象クラス</title>
+<title>Lecture 5. 継承・抽象クラス</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .proto-note{margin-top:20px;padding:11px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--bg-sunk);font-size:.8rem;color:var(--ink-soft);}
+  .proto-note b{color:var(--ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:8px;font-size:.96rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter__tag.ex{background:transparent;border:1px solid var(--accent);color:var(--accent-ink);}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+  h3{font-size:1.12rem;font-weight:700;margin:26px 0 12px;display:flex;align-items:baseline;gap:10px;}
+  h3 .num{font-family:var(--mono);font-size:.8rem;color:#fff;background:var(--accent);border-radius:5px;padding:1px 7px;flex:none;}
+
+  .narration{font-family:var(--serif);font-size:1.05rem;line-height:1.9;margin:0 0 20px;padding-left:18px;border-left:3px solid var(--line-strong);}
+  .narration p{margin:0 0 1em;}
+  .narration p:last-child{margin-bottom:0;}
+  .narration em{font-style:normal;color:var(--accent-ink);font-weight:600;font-family:var(--sans);font-size:.94em;}
+
+  figure.code{margin:0 0 20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.84rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+  .point ul{margin:.2em 0 0;padding-left:1.1em;}.point li{margin:.3em 0;}
+  .warn{display:flex;gap:12px;padding:13px 15px;background:#fdf3e7;border-left:3px solid #d98b2b;border-radius:0 10px 10px 0;font-size:.9rem;line-height:1.7;color:#7a4e17;margin:0 0 20px;}
+  .warn .label{flex:none;font-weight:700;}
+  :root[data-theme="dark"] .warn{background:#2a1f10;color:#e8c79a;}
+  @media (prefers-color-scheme: dark){.warn{background:#2a1f10;color:#e8c79a;}}
+  :root[data-theme="light"] .warn{background:#fdf3e7;color:#7a4e17;}
+  .prob{background:var(--step-bg);border-radius:10px;padding:16px 18px;margin:0 0 18px;}
+  .prob h4{margin:0 0 8px;font-size:.95rem;color:var(--accent-ink);}
+  .prob ul{margin:0;padding-left:1.2em;font-size:.93rem;line-height:1.7;}
+  .prob code{background:var(--tag-bg);}
+  table.mod{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:.9rem;}
+  table.mod th,table.mod td{border:1px solid var(--line);padding:8px 12px;text-align:center;}
+  table.mod th{background:var(--bg-sunk);font-weight:700;}
+  table.mod td:first-child{text-align:left;font-family:var(--mono);color:var(--accent-ink);}
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 5</p>
+    <h1>継承・抽象クラス</h1>
+    <p>継承の中でも難しい4つ──<code>super()</code>・<code>protected</code>・<code>override</code>・<code>abstract</code>を、<code>Character</code> を親とした <code>Warrior</code> / <code>Mage</code> で通して見ます。最後は演習として、これらを使った戦闘シミュレーションまで。</p>
+    <div class="proto-note"><b>コード系レクチャー（Lecture 5 復習＋補足＋演習）</b>：コードは Git のコミットから正確に掲載。解説は復習動画（5-a）の字幕を整形。動画では説明用にメソッド名を「action」としていますが、<b>リポジトリの実コードに合わせて <code>attack</code> で統一</b>しています。演習の問題文は回答コードから再構成。</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#c5a"><span class="n">5-a</span><span>復習：super / protected / override / abstract</span><span class="d">復習</span></a></li>
+    <li><a href="#c5b"><span class="n">5-b</span><span>補足：checkout の戻し方</span><span class="d">Git</span></a></li>
+    <li><a href="#cex"><span class="n">演習</span><span>Archer クラス / 戦闘シミュレーション</span><span class="d">課題</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- ===================== 5-a ===================== -->
+  <article class="chapter" id="c5a">
+    <span class="chapter__tag">Chapter 5-a</span>
+    <h2>継承・抽象クラスの復習</h2>
+    <p class="chapter__lead">出発点は、<code>Character</code>（名前・HP・<code>showStatus</code>）を <code>Warrior</code> / <code>Mage</code> が継承した状態。</p>
+
+    <blockquote class="narration">
+      <p><code>Character</code> クラスは <code>name</code> と <code>hp</code> というプロパティを持ち、コンストラクタで初期化、<code>showStatus</code> で状態を出力します。これを継承した <code>Warrior</code> と <code>Mage</code> は、<code>name</code>・<code>hp</code>・<code>showStatus</code> に加えて、それぞれ固有の攻撃メソッドを持ちます。ここから4つの要点を順に見ていきます。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/character.ts <span style="opacity:.6">（出発点）</span></span></figcaption><div class="code-scroll"><pre><span class="k">export</span> <span class="k">class</span> Character {
+  name: <span class="t">string</span>;
+  hp: <span class="t">number</span>;
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>) {
+    <span class="k">this</span>.name = name;
+    <span class="k">this</span>.hp = hp;
+  }
+
+  <span class="f">showStatus</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}: HP ${this.hp}`</span>);
+  }
+}</pre></div></figure>
+
+    <h3><span class="num">1</span>super() — 親のコンストラクタを呼ぶ</h3>
+    <blockquote class="narration">
+      <p><code>Warrior</code> に武器（<code>weapon</code>）を持たせたいとします。子クラスで独自のコンストラクタを書くと、<em>親のコンストラクタが上書きされて実行されなくなり</em>、<code>name</code> や <code>hp</code> の初期化が行われません。かといって子側で <code>this.name = name</code> と書くこともできません（親のプロパティを子で勝手に初期化はできない）。</p>
+      <p>そこで <em>super(name, hp)</em> と書きます。これは親（<code>Character</code>）のコンストラクタを呼ぶ記述です。継承したクラスで独自コンストラクタを書くときは、この <code>super()</code> をほぼ必ずワンセットで書く、と覚えておきましょう。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/warrior.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&#x27;./character.ts&#x27;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Warrior <span class="k">extends</span> Character {
+  <span class="k">private</span> weapon: <span class="t">string</span>;
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>, weapon: <span class="t">string</span>) {
+    <span class="k">super</span>(name, hp); <span class="c">// super() &lt;- 継承元 (character) の constructor</span>
+    <span class="k">this</span>.weapon = weapon;
+  };
+
+  <span class="k">override</span> <span class="f">attack</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は${this.weapon}で攻撃した！`</span>);
+  };
+}</pre></div></figure>
+
+    <h3><span class="num">2</span>protected — 継承先には許すアクセス制限</h3>
+    <blockquote class="narration">
+      <p><code>name</code> を <code>private</code> にすると、インスタンスからのアクセスは防げますが、<em>継承先の <code>Warrior</code> からもアクセスできなくなり</em>エラーになります。private は「そのクラスの中でだけ使える」という意味で、継承先は“外”扱いだからです。かといって <code>public</code> にすると誰からでも触れてしまう。</p>
+      <p>その中間が <em>protected</em>。インスタンスからは触れないが、<em>継承関係にある子クラスからは触れる</em>。厳しさの順に private → protected → public です。基本は private、継承先で使いたければ protected、どうしてもインスタンスから必要なときだけ public。</p>
+    </blockquote>
+    <table class="mod">
+      <tr><th>修飾子</th><th>継承先から</th><th>インスタンスから</th></tr>
+      <tr><td>private</td><td>×</td><td>×</td></tr>
+      <tr><td>protected</td><td>○</td><td>×</td></tr>
+      <tr><td>public</td><td>○</td><td>○</td></tr>
+    </table>
+
+    <h3><span class="num">3</span>override — 親のメソッドを上書きする</h3>
+    <blockquote class="narration">
+      <p><code>Warrior</code> の攻撃も <code>Mage</code> の攻撃も「行動」です。これを同じ名前 <code>attack</code> のメソッドとして扱いたい。そこで親 <code>Character</code> に汎用的な <code>attack</code> を置き、子クラスで <em>override</em> して独自の処理に書き換えます。</p>
+      <p>TypeScript では <code>override</code> を書かなくても上書きされますが、明示的に書いておくほうが分かりやすいです。これで <code>Warrior</code> は「武器で攻撃した」、<code>Mage</code> は「魔法を唱えた」と、それぞれ独自の処理になります。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/mage.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&#x27;./character.ts&#x27;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Mage <span class="k">extends</span> Character {
+  <span class="k">override</span> <span class="f">attack</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は魔法を唱えた！`</span>);
+  }
+}</pre></div></figure>
+
+    <h3><span class="num">4</span>abstract — 実装を持たない「契約」</h3>
+    <blockquote class="narration">
+      <p>親 <code>Character</code> に汎用的な <code>attack</code> の実装があると、子はそれを継承してしまいます。でも本当は、<code>attack</code> の中身は<em>子クラスごとに必ず独自実装してほしい</em>。そこで親側の実装を消し、「<code>attack</code> というメソッドがある」という<em>情報（契約）だけ</em>を持たせます。それが <em>abstract</em> メソッドです。</p>
+      <p>ただし代償があります。<code>attack</code> の中身が決まっていないので、この <code>Character</code> は<em>インスタンス化できなくなります</em>。設計図の中にさらに未完成の設計図（<code>attack</code>）がある状態で、そのままでは動かせないからです。abstract メソッドを持つクラスは <code>abstract class</code>（抽象クラス）になり、継承先で実装して初めて使えるようになります。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/character.ts <span style="opacity:.6">（4つの要点の集大成）</span></span></figcaption><div class="code-scroll"><pre><span class="k">export</span> <span class="k">abstract</span> <span class="k">class</span> Character {
+  <span class="k">protected</span> name: <span class="t">string</span>; <span class="c">// インスタンスからはアクセス出来ないが、継承先からはアクセスできる</span>
+  <span class="k">private</span> hp: <span class="t">number</span>; <span class="c">// インスタンスからも継承先からもアクセス出来ない</span>
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>) {
+    <span class="k">this</span>.name = name;
+    <span class="k">this</span>.hp = hp;
+  }
+
+  <span class="f">showStatus</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}: HP ${this.hp}`</span>);
+  }
+
+  <span class="k">abstract</span> <span class="f">attack</span>(): <span class="k">void</span>
+}</pre></div></figure>
+
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li><b>super(...)</b>：子で独自コンストラクタを書くなら、親のコンストラクタを呼ぶ。</li>
+        <li><b>protected</b>：インスタンスからは×、継承先からは○。private と public の中間。</li>
+        <li><b>override</b>：親のメソッドを子で上書きして独自処理にする。</li>
+        <li><b>abstract</b>：実装を持たず「必ず実装せよ」という契約。持つクラスは <code>abstract class</code> になりインスタンス化できない。</li>
+      </ul>
+      ここは本当に難しいところ。一度で分かる必要はなく、演習で書きながら体で覚えていく部分です。
+    </div></div>
+  </article>
+
+  <!-- ===================== 5-b ===================== -->
+  <article class="chapter" id="c5b">
+    <span class="chapter__tag">Chapter 5-b</span>
+    <h2>補足：checkout を元に戻す</h2>
+    <p class="chapter__lead">復習で古いコミットを見るために checkout した後、元に戻す方法。</p>
+
+    <blockquote class="narration">
+      <p>復習では、Git Graph で「lecture 3 課題」のコミットに <em>checkout</em>（一時的に巻き戻し）して中身を見ました。もし同じ手順を手元でやって、そこから差分を積んでしまった場合の戻し方です。</p>
+    </blockquote>
+    <ol class="steps" style="list-style:none;counter-reset:s;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:12px;">
+      <li style="counter-increment:s;position:relative;padding:13px 15px 13px 52px;background:var(--step-bg);border-radius:10px;font-size:.95rem;line-height:1.7;">積んだ差分がいらなければ、ソース管理の「変更の破棄」（元に戻すマーク）で全部破棄してよい。</li>
+      <li style="counter-increment:s;position:relative;padding:13px 15px 13px 52px;background:var(--step-bg);border-radius:10px;font-size:.95rem;line-height:1.7;">元の状態に戻すには、Git Graph で <code>main</code> を右クリック →「<b>Checkout Branch</b>」。これでメインブランチに戻れる。</li>
+    </ol>
+    <style>#c5b ol.steps li::before{content:counter(s);position:absolute;left:13px;top:11px;width:25px;height:25px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--mono);font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;}</style>
+    <div class="point"><span class="label">POINT</span><div>過去のコミットを <code>checkout</code> して見るのは自由。戻すときは「変更の破棄」＋ <code>main</code> ブランチへ <code>Checkout Branch</code>。</div></div>
+  </article>
+
+  <!-- ===================== 演習 ===================== -->
+  <article class="chapter" id="cex">
+    <span class="chapter__tag ex">演習</span>
+    <h2>演習：継承と抽象クラスを使う</h2>
+    <p class="chapter__lead">学んだ継承・override・abstract を使って、キャラクターと戦闘を作ります。</p>
+
+    <h3><span class="num" style="background:transparent;color:var(--accent-ink);border:1px solid var(--accent);">1</span>Archer クラス</h3>
+    <div class="prob">
+      <h4>問題</h4>
+      <ul>
+        <li><code>Character</code> を継承した <code>Archer</code> クラスを作る。</li>
+        <li>矢の数 <code>arrows</code> を持ち、コンストラクタで受け取る（<code>super()</code> を忘れずに）。</li>
+        <li><code>attack</code> を実装：矢が無ければ「矢がない!」、あれば矢を1本減らして「矢を放った!」。</li>
+      </ul>
+    </div>
+    <figure class="code"><figcaption><span class="file">src/archer.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&quot;./character&quot;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Archer <span class="k">extends</span> Character {
+  <span class="k">private</span> arrows: <span class="t">number</span>;
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>, arrows: <span class="t">number</span>) {
+    <span class="k">super</span>(name, hp);
+    <span class="k">this</span>.arrows = arrows;
+  };
+
+  <span class="f">attack</span>() {
+    <span class="k">if</span> (<span class="k">this</span>.arrows &lt;= <span class="n">0</span>) {
+      console.<span class="f">log</span>(<span class="s">`${this.name} は矢がない!`</span>);
+      <span class="k">return</span>;
+    }
+    <span class="k">this</span>.arrows--;
+    console.<span class="f">log</span>(<span class="s">`${this.name} は矢を放った!`</span>);
+  }
+}</pre></div></figure>
+
+    <h3><span class="num" style="background:transparent;color:var(--accent-ink);border:1px solid var(--accent);">2</span>戦闘シミュレーション（発展）</h3>
+    <div class="prob">
+      <h4>問題</h4>
+      <ul>
+        <li><code>attack</code> が<b>攻撃する相手（opponent）</b>を引数に取るようにする。</li>
+        <li><code>Character</code> に <code>takeDamage(damage)</code>（HP を減らす。0 未満なら 0）と <code>isDead()</code>（HP が 0 以下か）を追加。</li>
+        <li><code>attack</code> の中で <code>opponent.takeDamage(...)</code> を呼び、相手の HP を減らす。</li>
+        <li><code>main.ts</code> で、敵とのターン制バトルを <code>while</code> ループで回す。</li>
+      </ul>
+    </div>
+    <figure class="code"><figcaption><span class="file">src/characters/character.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">export</span> <span class="k">abstract</span> <span class="k">class</span> Character {
+  <span class="k">protected</span> name: <span class="t">string</span>; <span class="c">// インスタンスからはアクセス出来ないが、継承先からはアクセスできる</span>
+  <span class="k">protected</span> hp: <span class="t">number</span>; <span class="c">// インスタンスからも継承先からもアクセス出来ない</span>
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>) {
+    <span class="k">this</span>.name = name;
+    <span class="k">this</span>.hp = hp;
+  }
+
+  <span class="f">getName</span>() {
+    <span class="k">return</span> <span class="k">this</span>.name;
+  }
+
+  <span class="f">showStatus</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}: HP ${this.hp}`</span>);
+  }
+
+  <span class="c">// ダメージを受ける takeDamage メソッドを追加する</span>
+  <span class="f">takeDamage</span>(damage: <span class="t">number</span>): <span class="k">void</span> {
+    <span class="k">const</span> resultHp = <span class="k">this</span>.hp - damage;
+    <span class="k">if</span> (resultHp &lt; <span class="n">0</span>) {
+      <span class="k">this</span>.hp = <span class="n">0</span>;
+    } <span class="k">else</span> {
+      <span class="k">this</span>.hp = resultHp;
+    }
+  }
+
+  <span class="c">// HP が 0 以下かどうかを返す</span>
+  <span class="f">isDead</span>(): <span class="t">boolean</span> {
+    <span class="k">return</span> <span class="k">this</span>.hp &lt;= <span class="n">0</span>;
+  }
+
+  <span class="c">// 攻撃する相手を引数に取る</span>
+  <span class="k">abstract</span> <span class="f">attack</span>(opponent: Character): <span class="k">void</span>
+}</pre></div></figure>
+    <figure class="code"><figcaption><span class="file">src/characters/warrior.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&#x27;./character.ts&#x27;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Warrior <span class="k">extends</span> Character {
+  <span class="k">private</span> weapon: <span class="t">string</span>;
+
+  <span class="k">constructor</span>(name: <span class="t">string</span>, hp: <span class="t">number</span>, weapon: <span class="t">string</span>) {
+    <span class="k">super</span>(name, hp); <span class="c">// super() &lt;- 継承元 (character) の constructor</span>
+    <span class="k">this</span>.weapon = weapon;
+  };
+
+  <span class="k">override</span> <span class="f">attack</span>(opponent: Character) {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は${this.weapon}で攻撃した！`</span>);
+
+    <span class="c">// opponent は他人なので protected だとアクセスできない</span>
+    <span class="c">// hp プロパティを直接触らずに opponent の hp を減らす必要がある</span>
+    opponent.<span class="f">takeDamage</span>(<span class="n">20</span>);
+  };
+}</pre></div></figure>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span><span>戦闘シミュレーション</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Enemy } <span class="k">from</span> <span class="s">&quot;./characters/enemy&quot;</span>;
+<span class="k">import</span> { Warrior } <span class="k">from</span> <span class="s">&quot;./characters/warrior&quot;</span>;
+
+<span class="k">const</span> slime = <span class="k">new</span> <span class="f">Enemy</span>(<span class="s">&quot;スライム&quot;</span>, <span class="n">50</span>);
+<span class="k">const</span> arther = <span class="k">new</span> <span class="f">Warrior</span>(<span class="s">&quot;アーサー&quot;</span>, <span class="n">100</span>, <span class="s">&quot;エクスカリバー&quot;</span>);
+
+<span class="k">while</span> (<span class="k">true</span>) {
+  slime.<span class="f">attack</span>(arther);
+  arther.<span class="f">showStatus</span>();
+
+  <span class="k">if</span> (arther.<span class="f">isDead</span>()) {
+    console.<span class="f">log</span>(<span class="s">`${arther.getName()}は倒れた...`</span>);
+    break;
+  }
+
+  arther.<span class="f">attack</span>(slime);
+  slime.<span class="f">showStatus</span>();
+
+  <span class="k">if</span> (slime.<span class="f">isDead</span>()) {
+    console.<span class="f">log</span>(<span class="s">`${slime.getName()}を倒した！`</span>);
+    break;
+  }
+}</pre></div></figure>
+
+    <div class="point"><span class="label">POINT</span><div>
+      <code>hp</code> は <code>protected</code> なので、相手の HP を<em>直接</em>は触れない。だから <code>opponent.takeDamage(20)</code> のように<b>メソッド経由</b>で減らす──これがカプセル化。<code>isDead()</code> で勝敗を判定し、<code>while</code> ループで交互に攻撃させれば、継承・抽象クラス・カプセル化がひとつの戦闘として動き出します。
+    </div></div>
+  </article>
+
+</main>
+
+</body>
+</html>

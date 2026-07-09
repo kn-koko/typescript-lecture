@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 1. import / export</title>
+<title>Lecture 1. import / export</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .proto-note{margin-top:20px;padding:11px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--bg-sunk);font-size:.8rem;color:var(--ink-soft);}
+  .proto-note b{color:var(--ink);}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:16px 24px 100px;}
+  section{padding:22px 0;border-bottom:1px solid var(--line);}
+  section:last-child{border-bottom:0;}
+  h2{font-size:1.4rem;font-weight:700;letter-spacing:-.01em;margin:0 0 8px;line-height:1.3;text-wrap:balance;}
+  .lead{color:var(--ink-soft);font-size:.93rem;margin:0 0 18px;}
+  h3{font-size:1.08rem;font-weight:700;margin:22px 0 12px;}
+
+  .narration{font-family:var(--serif);font-size:1.05rem;line-height:1.9;margin:0 0 20px;padding-left:18px;border-left:3px solid var(--line-strong);}
+  .narration p{margin:0 0 1em;}
+  .narration p:last-child{margin-bottom:0;}
+  .narration em{font-style:normal;color:var(--accent-ink);font-weight:600;font-family:var(--sans);font-size:.94em;}
+
+  figure.code{margin:0 0 22px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.86rem;line-height:1.7;tab-size:2;color:var(--ink);}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+  .point ul{margin:.2em 0 0;padding-left:1.1em;}
+  .point li{margin:.3em 0;}
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}h2{font-size:1.2rem;}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 1</p>
+    <h1>import / export — コードをファイルに分ける</h1>
+    <p>コードをすべて1ファイルに書くと長くなりすぎます。適切な大きさで別ファイルに分け、必要なものだけ読み込む。その受け渡しをするのが <code>export</code> と <code>import</code> です。</p>
+    <div class="proto-note"><b>コード系レクチャー（Lecture 1）</b>：コードは Git のコミット（<code>lecture 1. import/export</code>）から正確に掲載。解説文は字幕を整形したものです。</div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>そもそも import / export とは</h2>
+    <blockquote class="narration">
+      <p>TypeScript では <code>main.ts</code> などにコードを書いていきますが、全部を1ファイルに書くとすごく長くなります。そこで、適切なサイズで<em>別のファイルに分けて置き</em>、そこに書いた関数・変数・（この後扱う）クラスを、使いたいファイルから <em>import</em> して呼び出します。公開する側が <em>export</em>、読み込む側が <em>import</em> です。</p>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>名前付き export（関数）</h2>
+    <blockquote class="narration">
+      <p>足し算をする <code>add</code> 関数を <code>functions.ts</code> に書き、<code>main.ts</code> から使いたいとします。ただファイルを分けて<em>移しただけでは動きません</em>──「その関数がどこで定義されたのか分からない」というエラーになります。</p>
+      <p>そこで関数の前に <em>export</em> をつけます。これで他のファイルから呼び出せるようになります。読み込む側は <code>{ add }</code> のように<em>波かっこ</em>で受け取ります。</p>
+    </blockquote>
+    <figure class="code">
+      <figcaption><span class="file">src/functions.ts</span></figcaption>
+      <div class="code-scroll"><pre><span class="k">export</span> <span class="k">function</span> <span class="f">add</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">return</span> a + b;
+}</pre></div>
+    </figure>
+    <figure class="code">
+      <figcaption><span class="file">src/main.ts</span></figcaption>
+      <div class="code-scroll"><pre><span class="k">import</span> { add } <span class="k">from</span> <span class="s">"./functions"</span>;
+
+<span class="f">console</span>.log(<span class="f">add</span>(<span class="n">5</span>, <span class="n">3</span>)); <span class="c">// 8</span></pre></div>
+    </figure>
+  </section>
+
+  <section>
+    <h2>変数も export できる</h2>
+    <blockquote class="narration">
+      <p>export は関数だけのものではありません。たとえば円周率 <code>PI</code> を変数として定義し、同じように <em>export</em> をつければ、他のファイルから <code>{ PI }</code> で読み込めます。<em>変数・クラスにも同じように使えます</em>。</p>
+    </blockquote>
+    <figure class="code">
+      <figcaption><span class="file">src/functions.ts <span style="opacity:.6">（追記）</span></span></figcaption>
+      <div class="code-scroll"><pre><span class="k">export</span> <span class="k">const</span> PI = <span class="n">3.14159</span>;</pre></div>
+    </figure>
+  </section>
+
+  <section>
+    <h2>default export</h2>
+    <blockquote class="narration">
+      <p>もう1つ、<em>default export</em> という書き方があります。掛け算の <code>multiply</code> を <code>export default</code> で公開すると、読み込むときに<em>波かっこなし</em>で受け取れます。</p>
+      <p>ただし特徴（制限）が1つ。<em>1ファイルにつき default export は1つだけ</em>。2つ書くとエラーになります。</p>
+    </blockquote>
+    <figure class="code">
+      <figcaption><span class="file">src/functions.ts <span style="opacity:.6">（追記）</span></span></figcaption>
+      <div class="code-scroll"><pre><span class="k">export default</span> <span class="k">function</span> <span class="f">multiply</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">return</span> a * b;
+}</pre></div>
+    </figure>
+    <blockquote class="narration">
+      <p>読み込む側では、default export の <code>multiply</code> は波かっこなし、名前付きの <code>add</code>・<code>PI</code> は波かっこ、というように1行にまとめて書けます。</p>
+    </blockquote>
+  </section>
+
+  <section>
+    <h2>完成形</h2>
+    <p class="lead">コミット <code>lecture 1. import/export</code> の最終コード。</p>
+    <figure class="code">
+      <figcaption><span class="file">src/functions.ts</span></figcaption>
+      <div class="code-scroll"><pre><span class="k">export</span> <span class="k">const</span> PI = <span class="n">3.14159</span>;
+
+<span class="k">export</span> <span class="k">function</span> <span class="f">add</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">return</span> a + b;
+}
+
+<span class="k">export default</span> <span class="k">function</span> <span class="f">multiply</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">return</span> a * b;
+}</pre></div>
+    </figure>
+    <figure class="code">
+      <figcaption><span class="file">src/main.ts</span></figcaption>
+      <div class="code-scroll"><pre><span class="k">import</span> multiply, { add, PI } <span class="k">from</span> <span class="s">"./functions"</span>;
+
+<span class="f">console</span>.log(<span class="f">add</span>(<span class="n">5</span>, <span class="n">3</span>));      <span class="c">// 8</span>
+<span class="f">console</span>.log(PI);            <span class="c">// 3.14159</span>
+<span class="f">console</span>.log(<span class="f">multiply</span>(<span class="n">5</span>, <span class="n">3</span>)); <span class="c">// 15</span></pre></div>
+    </figure>
+
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li><b>import / export</b> は関数・変数・クラスすべてに使える。</li>
+        <li><b>名前付き export</b> は <code>{ add }</code> と波かっこで、<b>default export</b> は <code>multiply</code> と波かっこなしで受け取る。</li>
+        <li><b>default export は1ファイルにつき1つだけ</b>。</li>
+        <li>クラスは「1ファイル＝1クラス」で書くのが基本。だから別ファイルのクラスを使うには export / import が必要になる──それでクラスより先にこの話をした。</li>
+      </ul>
+    </div></div>
+  </section>
+
+</main>
+
+</body>
+</html>
