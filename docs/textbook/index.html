@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeScript 講座 — テキスト教材</title>
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --tag-bg:#e8eef6;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 780px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --tag-bg:#1c2532;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:56px 24px 40px;}
+  .kicker{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 14px;}
+  .masthead h1{font-size:2.3rem;font-weight:700;line-height:1.2;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:1rem;max-width:60ch;}
+  .masthead .meta{margin-top:18px;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono);}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:32px 24px 96px;}
+  .list{display:flex;flex-direction:column;gap:12px;}
+  .card{display:flex;gap:18px;align-items:flex-start;padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;transition:border-color .15s, transform .15s;}
+  .card:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .card__no{flex:none;font-family:var(--mono);font-size:1.05rem;font-weight:700;color:#fff;background:var(--accent);width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+  .card__body{flex:1;min-width:0;}
+  .card__title{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;margin:0 0 4px;line-height:1.35;}
+  .card__desc{color:var(--ink-soft);font-size:.9rem;margin:0;}
+  .card__meta{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:8px;padding-top:2px;}
+  .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .tag.op{color:#7a4e17;background:#f7ecd9;}
+  .tag.cn{color:#1f7a4d;background:#e6f4ec;}
+  @media (prefers-color-scheme: dark){.tag.op{color:#e8c79a;background:#2a1f10;}.tag.cn{color:#7fd3a0;background:#12281d;}}
+  .arrow{color:var(--ink-faint);font-size:1.1rem;}
+  .card:hover .arrow{color:var(--accent);}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 24px 64px;color:var(--ink-faint);font-size:.82rem;line-height:1.7;}
+  footer .note{padding:14px 16px;background:var(--bg-sunk);border-radius:10px;}
+  footer code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 5px;border-radius:4px;}
+
+  @media(max-width:560px){
+    .masthead h1{font-size:1.7rem;}
+    .card{flex-wrap:wrap;gap:12px;}
+    .card__meta{flex-direction:row;width:100%;justify-content:flex-start;order:3;padding-left:62px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座</p>
+    <h1>テキスト教材</h1>
+    <p>オンデマンド動画の内容を、コミット順に沿ってテキスト化した教材です。各回は「講師の解説（字幕ベース）」と「そのとき書いたコード／操作画面」がセットになっています。全8回。</p>
+    <p class="meta">Lecture 0 – 7 ／ 解説＋コード＋スクリーンショット</p>
+  </div>
+</header>
+
+<main>
+  <div class="list">
+
+    <a class="card" href="./lecture0.html">
+      <span class="card__no">0</span>
+      <span class="card__body">
+        <p class="card__title">環境構築 — Vite と Git</p>
+        <p class="card__desc">Vite プロジェクトの作成と、Git のセットアップ（初コミット・Git Graph まで）。</p>
+      </span>
+      <span class="card__meta"><span class="tag op">操作</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture1.html">
+      <span class="card__no">1</span>
+      <span class="card__body">
+        <p class="card__title">import / export</p>
+        <p class="card__desc">コードをファイルに分ける。名前付き export と default export。</p>
+      </span>
+      <span class="card__meta"><span class="tag">コード</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture2.html">
+      <span class="card__no">2</span>
+      <span class="card__body">
+        <p class="card__title">クラス</p>
+        <p class="card__desc">プロパティとメソッド、設計図とインスタンス、アクセス修飾子。＋演習（Counter / Book）。</p>
+      </span>
+      <span class="card__meta"><span class="tag">コード</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture3.html">
+      <span class="card__no">3</span>
+      <span class="card__body">
+        <p class="card__title">継承とは</p>
+        <p class="card__desc">共通の性質を親クラスにまとめる。Dog / Animal の例で <code style="font-family:var(--mono)">extends</code> を理解する。</p>
+      </span>
+      <span class="card__meta"><span class="tag cn">概念</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture4.html">
+      <span class="card__no">4</span>
+      <span class="card__body">
+        <p class="card__title">GitHub — コードを共有する</p>
+        <p class="card__desc">fork / clone / push、リモートリポジトリの作成。準備からひと通り。</p>
+      </span>
+      <span class="card__meta"><span class="tag op">操作</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture5.html">
+      <span class="card__no">5</span>
+      <span class="card__body">
+        <p class="card__title">継承・抽象クラス</p>
+        <p class="card__desc">super / protected / override / abstract の4点。＋演習（Archer・戦闘シミュレーション）。</p>
+      </span>
+      <span class="card__meta"><span class="tag">コード</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture6.html">
+      <span class="card__no">6</span>
+      <span class="card__body">
+        <p class="card__title">チーム開発 Git</p>
+        <p class="card__desc">ブランチ・stash・プルリクエスト・マージ・pull。チーム開発のワークフロー。</p>
+      </span>
+      <span class="card__meta"><span class="tag op">操作</span><span class="arrow">→</span></span>
+    </a>
+
+    <a class="card" href="./lecture7.html">
+      <span class="card__no">7</span>
+      <span class="card__body">
+        <p class="card__title">interface</p>
+        <p class="card__desc">型定義としての interface、<code style="font-family:var(--mono)">implements</code>、そして継承との違い。</p>
+      </span>
+      <span class="card__meta"><span class="tag">コード</span><span class="arrow">→</span></span>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <div class="note">
+    コードは Git のコミットから引用、操作画面は講義動画から抽出しています。演習の問題文は回答コードから再構成したものです。各回の冒頭に、その回の作り方（元コミット・補足の有無）を記載しています。
+  </div>
+</footer>
+
+</body>
+</html>

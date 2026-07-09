@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 7. interface</title>
+<title>Lecture 7. interface</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .proto-note{margin-top:20px;padding:11px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--bg-sunk);font-size:.8rem;color:var(--ink-soft);}
+  .proto-note b{color:var(--ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:8px;font-size:.96rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+  h3{font-size:1.05rem;font-weight:700;margin:22px 0 12px;}
+
+  .narration{font-family:var(--serif);font-size:1.05rem;line-height:1.9;margin:0 0 20px;padding-left:18px;border-left:3px solid var(--line-strong);}
+  .narration p{margin:0 0 1em;}.narration p:last-child{margin-bottom:0;}
+  .narration em{font-style:normal;color:var(--accent-ink);font-weight:600;font-family:var(--sans);font-size:.94em;}
+
+  figure.code{margin:0 0 20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.85rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+  .grid2 figure.code{margin:0;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+  .point ul{margin:.2em 0 0;padding-left:1.1em;}.point li{margin:.3em 0;}
+  table.cmp{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:.9rem;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+  table.cmp th{background:var(--bg-sunk);font-weight:700;}
+  table.cmp td:first-child,table.cmp th:first-child{width:34%;}
+  table.cmp code{background:var(--tag-bg);}
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 7</p>
+    <h1>interface — 型の“契約”を定義する</h1>
+    <p><code>interface</code> は、いわば<em>クラスの型だけバージョン</em>。実装は持たず、型の情報だけを定義します。使い道は2つ──オブジェクトの型定義として、そしてクラスに「この能力を持つ」と約束させる（<code>implements</code>）ために。</p>
+    <div class="proto-note"><b>コード系レクチャー（Lecture 7 全4章）</b>：コードは Git のコミット（<code>type と interface</code> / <code>interface と class</code>）から正確に掲載。解説は字幕を整形しています。</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#c7a"><span class="n">7-a</span><span>interface の基礎</span><span class="d">概念</span></a></li>
+    <li><a href="#c7b"><span class="n">7-b</span><span>型定義としての interface</span><span class="d">型</span></a></li>
+    <li><a href="#c7c"><span class="n">7-c</span><span>クラスと interface（implements）</span><span class="d">実装</span></a></li>
+    <li><a href="#c7d"><span class="n">7-d</span><span>interface と継承の違い</span><span class="d">比較</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- 7-a -->
+  <article class="chapter" id="c7a">
+    <span class="chapter__tag">Chapter 7-a</span>
+    <h2>interface の基礎</h2>
+    <p class="chapter__lead">interface とは何か。まず概要から。</p>
+    <blockquote class="narration">
+      <p><code>interface</code> は、いちばん分かりやすく言うと<em>クラスの「型だけ」バージョン</em>です。重要なのは、<em>実装を持てない</em>こと。下の例では、<code>name</code> が string 型、<code>age</code> が number 型、<code>greet</code> が string を返すメソッド──という<em>型の情報だけ</em>を定義していて、値や処理の中身は書きません。</p>
+      <p>書き方はクラスにかなり似ています（<code>name</code>/<code>age</code> はプロパティ的、<code>greet</code> はメソッド的）。使い道は2つ。1つは<em>純粋に型の定義</em>として。もう1つは<em>クラスとセット</em>で使う方法です。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">interface の例</span></figcaption><div class="code-scroll"><pre><span class="k">interface</span> Person {
+  name: <span class="t">string</span>;
+  age: <span class="t">number</span>;
+  <span class="f">greet</span>(): <span class="t">string</span>;
+}</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div><code>interface</code> ＝ クラスの型だけ版。<b>実装は持たない</b>、型の情報だけ。使い道は「型定義として」と「クラスに <code>implements</code> させて」の2つ。</div></div>
+  </article>
+
+  <!-- 7-b -->
+  <article class="chapter" id="c7b">
+    <span class="chapter__tag">Chapter 7-b</span>
+    <h2>型定義としての interface</h2>
+    <p class="chapter__lead">1つ目の使い方。<code>type</code> とほぼ同じ。</p>
+    <blockquote class="narration">
+      <p>以前、人を表すオブジェクトの型を <code>type Person = { ... }</code> で定義したことがありました。この <code>type</code> で定義していた型は、<em>そのまま <code>interface</code> に置き換えられます</em>。<code>type</code> を <code>interface</code> に変え、<code>=</code> を消すだけ。</p>
+      <p>どちらを使っても、このケースでは<em>まったく同じ</em>ものとして使えます。型が合わなければ同じようにエラーになります。詳しく見ると型の合成・継承などで違いはありますが、今の段階ではどちらでも構いません。ただ、<em>プロジェクト内では type か interface に統一</em>しておくと読みやすいです。</p>
+    </blockquote>
+    <div class="grid2">
+      <figure class="code"><figcaption><span class="file">type 版</span></figcaption><div class="code-scroll"><pre><span class="k">type</span> Person = {
+  name: <span class="t">string</span>;
+  age: <span class="t">number</span>;
+  <span class="k">from</span>: <span class="t">string</span>;
+};</pre></div></figure>
+      <figure class="code"><figcaption><span class="file">interface 版</span></figcaption><div class="code-scroll"><pre><span class="k">interface</span> Person {
+  name: <span class="t">string</span>;
+  age: <span class="t">number</span>;
+  <span class="k">from</span>: <span class="t">string</span>;
+}</pre></div></figure>
+    </div>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">interface</span> Person {
+  name: <span class="t">string</span>;
+  age: <span class="t">number</span>;
+  <span class="k">from</span>: <span class="t">string</span>;
+}
+
+<span class="k">const</span> alice: Person = {
+  name: <span class="s">&quot;Alice&quot;</span>,
+  age: <span class="n">25</span>,
+  <span class="k">from</span>: <span class="s">&quot;America&quot;</span>,
+};
+
+<span class="k">const</span> bob: Person = {
+  name: <span class="s">&quot;Bob&quot;</span>,
+  age: <span class="n">18</span>,
+  <span class="k">from</span>: <span class="s">&quot;Australia&quot;</span>,
+};</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>オブジェクトの型定義としては <code>type</code> とほぼ同じ。<code>type X = {...}</code> ⇔ <code>interface X {...}</code>（<code>=</code> の有無）。<b>どちらかに統一</b>して使う。</div></div>
+  </article>
+
+  <!-- 7-c -->
+  <article class="chapter" id="c7c">
+    <span class="chapter__tag">Chapter 7-c</span>
+    <h2>クラスと interface（implements）</h2>
+    <p class="chapter__lead">2つ目の使い方。クラスに「この能力を持つ」と約束させる。</p>
+    <blockquote class="narration">
+      <p><code>Character</code> を継承した新しいキャラクター <code>Priest</code>（僧侶）を追加します。ただ Priest は攻撃役ではないので、<code>attack</code> は「攻撃できない」にしておき、代わりに<em>回復メソッド <code>heal</code></em> を持たせたい。</p>
+      <p>この「<code>heal</code> できる」という性質を、<em>interface <code>Healable</code></em> として定義します。「<code>heal(target)</code> というメソッドを持つ」という契約です。そして <code>Priest</code> が <code>implements Healable</code> と書くことで、「私は Healable です（heal を実装します）」と約束します。実装しなければエラーになる点は、<code>abstract</code> メソッドと似ています。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/characters/healable.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> <span class="k">type</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">interface</span> Healable {
+  <span class="f">heal</span>(target: Character): <span class="k">void</span>;
+}</pre></div></figure>
+    <blockquote class="narration">
+      <p>回復は、対象の HP を増やす処理です。ただ <code>hp</code> は <code>protected</code> なので、他人の HP を直接いじれません。そこで <code>Character</code> に <code>takeHeal</code> メソッドを足し、<em>メソッド経由</em>で HP を増やします（ダメージの <code>takeDamage</code> と同じ考え方＝カプセル化）。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/characters/character.ts <span style="opacity:.6">（takeHeal を追加）</span></span></figcaption><div class="code-scroll"><pre><span class="k">export</span> <span class="k">abstract</span> <span class="k">class</span> Character {
+  <span class="k">protected</span> name: <span class="t">string</span>;
+  <span class="k">protected</span> hp: <span class="t">number</span>;
+
+  <span class="c">// ... constructor, showStatus, takeDamage, isDead は Lecture 5 と同じ ...</span>
+
+  <span class="c">// HP を回復する（hp は protected なので、メソッド経由で増やす）</span>
+  <span class="f">takeHeal</span>(amount: <span class="t">number</span>) {
+    <span class="k">this</span>.hp += amount;
+  }
+
+  <span class="k">abstract</span> <span class="f">attack</span>(opponent: Character): <span class="k">void</span>;
+}</pre></div></figure>
+    <div class="grid2">
+      <figure class="code"><figcaption><span class="file">src/characters/priest.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+<span class="k">import</span> <span class="k">type</span> { Healable } <span class="k">from</span> <span class="s">&quot;./healable.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Priest <span class="k">extends</span> Character <span class="k">implements</span> Healable {
+  <span class="f">attack</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は攻撃できない`</span>);
+  }
+
+  <span class="f">heal</span>(target: Character) {
+    target.<span class="f">takeHeal</span>(<span class="n">10</span>);
+  }
+}</pre></div></figure>
+      <figure class="code"><figcaption><span class="file">src/characters/magician.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+<span class="k">import</span> <span class="k">type</span> { Healable } <span class="k">from</span> <span class="s">&quot;./healable.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">class</span> Magician <span class="k">extends</span> Character <span class="k">implements</span> Healable {
+  <span class="f">attack</span>(opponent: Character) {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は魔法で攻撃した`</span>);
+    opponent.<span class="f">takeDamage</span>(<span class="n">5</span>);
+  }
+
+  <span class="f">heal</span>(target: Character) {
+    target.<span class="f">takeHeal</span>(<span class="n">8</span>);
+  }
+}</pre></div></figure>
+    </div>
+    <blockquote class="narration">
+      <p><code>Priest</code> も <code>Magician</code> も <code>Character</code> を <em>extends</em> しつつ、<code>Healable</code> を <em>implements</em> しています。どちらも「キャラクターの一種」であり、かつ「回復できる」。この2つを別々に表現できるのがポイントです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Magician } <span class="k">from</span> <span class="s">&quot;./characters/magician&quot;</span>;
+<span class="k">import</span> { Priest } <span class="k">from</span> <span class="s">&quot;./characters/priest&quot;</span>;
+
+<span class="k">const</span> alice = <span class="k">new</span> <span class="f">Priest</span>(<span class="s">&quot;Alice&quot;</span>, <span class="n">100</span>);
+<span class="k">const</span> bob = <span class="k">new</span> <span class="f">Magician</span>(<span class="s">&quot;Bob&quot;</span>, <span class="n">80</span>);
+
+alice.<span class="f">heal</span>(bob);
+bob.<span class="f">heal</span>(alice);</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div><b>extends</b> は「〜の一種である」（親クラスを継承）、<b>implements</b> は「〜できる」という性質を約束する。interface が定めたメソッドは必ず実装する契約になる。</div></div>
+  </article>
+
+  <!-- 7-d -->
+  <article class="chapter" id="c7d">
+    <span class="chapter__tag">Chapter 7-d</span>
+    <h2>interface と継承の違い</h2>
+    <p class="chapter__lead">なぜ継承だけでは足りず、interface が要るのか。</p>
+    <blockquote class="narration">
+      <p>interface の強みがいちばん分かりやすいのがここです。<em>継承（extends）は、親を1つしか持てません</em>（単一継承）。だから「特定のクラスにだけ、このメソッドを持たせる」という<em>枝分かれ</em>は、継承だけでは表現できません。</p>
+      <p>たとえば「回復できる（Healable）」のは Priest と Magician だけ、「上級攻撃ができる（SuperJob）」のは SuperPriest だけ──こういう<em>横断的な能力</em>は、interface を必要なクラスにだけ <code>implements</code> することで表現できます（1つのクラスが複数の interface を持てる）。</p>
+    </blockquote>
+    <blockquote class="narration">
+      <p>使い分けの指針はこうです。継承する<em>すべての</em>クラスが絶対に持つメソッド（<code>attack</code> など）は、<em>親クラス（Character）</em>に書く。一方、<em>特定の職業だけ</em>が持つメソッド（<code>heal</code>、<code>superAttack</code> など）は、<em>interface</em> で定義して、その属性を持つクラスにだけ付ける。</p>
+    </blockquote>
+    <table class="cmp">
+      <tr><th></th><th>継承（extends）</th><th>interface（implements）</th></tr>
+      <tr><td>意味</td><td>「〜の一種である」</td><td>「〜できる」という性質</td></tr>
+      <tr><td>数</td><td>親は<b>1つだけ</b>（単一）</td><td><b>複数</b>付けられる</td></tr>
+      <tr><td>実装</td><td>親の実装を引き継ぐ</td><td>実装は持たない（契約のみ）</td></tr>
+      <tr><td>使いどころ</td><td>全クラス共通のメソッド（<code>attack</code>）</td><td>特定クラスだけの能力（<code>heal</code>）</td></tr>
+    </table>
+    <div class="point"><span class="label">POINT</span><div><b>extends＝縦の系譜（1つの親）／implements＝横断的な性質（複数付与可）</b>。共通のメソッドは親クラスにまとめ、限定的な能力は interface で必要なクラスにだけ付ける。これが継承と interface の使い分け。</div></div>
+  </article>
+
+</main>
+
+</body>
+</html>
