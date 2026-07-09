@@ -15,6 +15,10 @@ export abstract class Character {
     console.log(`${this.name}: HP ${this.hp}`);
   }
 
+  takeHeal(amount: number) {
+    this.hp += amount;
+  }
+
   // ダメージを受ける takeDamage メソッドを追加する
   takeDamage(damage: number): void {
     const resultHp = this.hp - damage;
@@ -31,5 +35,5 @@ export abstract class Character {
   }
 
   // 攻撃する相手を引数に取る
-  abstract attack(opponent: Character): void
+  abstract attack(opponent: Character): void;
 }
