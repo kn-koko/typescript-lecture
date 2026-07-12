@@ -1,4 +1,4 @@
 import { Character } from "./character";
-export interface Reviveable {
+export interface Revivable {
   revive(target: Character): void;
 }
