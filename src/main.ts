@@ -1,3 +1,4 @@
+import { HolyPriest } from "./holyPriest";
 import { Mage } from "./mage";
 import { Warrior } from "./warrior";
 import { Enemy } from "./enemy";
@@ -16,10 +17,15 @@ const mage = new Mage("メディア", 80, 40);
 mage.showStatus();
 const archer = new Archer("エミヤ", 130, 3, 20);
 archer.showStatus();
+const holyPriest = new HolyPriest("グネヴィア", 130, 30);
+holyPriest.showStatus();
 
 //const party = [warrior, mage, archer];
 
 battle(archer, warrior);
+holyPriest.revive(archer);
+warrior.showStatus();
+
 battle(mage, slime);
 
 //for (const member of party) {

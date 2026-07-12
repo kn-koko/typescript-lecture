@@ -2,11 +2,15 @@ export abstract class Character {
   protected name: string; // インスタンスからはアクセス出来ないが、継承先からはアクセスできる
   protected hp: number; // インスタンスからも継承先からもアクセス出来ない
   protected power: number;
+  //TODO: maxHp プロパティを追加する
+  protected maxHp: number;
 
   constructor(name: string, hp: number, power: number) {
     this.name = name;
     this.hp = hp;
     this.power = power;
+    //TODO: maxHp プロパティの初期化
+    this.maxHp = hp;
   }
 
   showStatus() {
@@ -32,5 +36,12 @@ export abstract class Character {
 
   isDead(): boolean {
     return this.hp <= 0;
+  }
+
+  takeHeal(heal: number): void {
+    this.hp = this.hp + heal;
+    if (this.hp > this.maxHp) {
+      this.hp = this.maxHp;
+    }
   }
 }
