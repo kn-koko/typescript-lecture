@@ -1,8 +1,22 @@
-import { Magician } from "./characters/magician";
-import { Priest } from "./characters/priest";
+import { Enemy } from "./characters/enemy";
+import { Warrior } from "./characters/warrior";
 
-const alice = new Priest("Alice", 100);
-const bob = new Magician("Bob", 80);
+const slime = new Enemy("スライム", 50);
+const arthur = new Warrior("アーサー", 100, "エクスカリバー");
 
-alice.heal(bob);
-bob.heal(alice);
+while (true) {
+  arthur.attack(slime);
+  if (slime.isDead()) {
+    console.log(`${slime.getName()}を倒した！`);
+    break;
+  }
+
+  slime.attack(arthur);
+  if (arthur.isDead()) {
+    console.log(`${arthur.getName()}は倒れた...`);
+    break;
+  }
+
+  arthur.showStatus();
+  slime.showStatus();
+}
