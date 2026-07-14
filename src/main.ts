@@ -2,10 +2,15 @@ import type { Character } from "./characters/character";
 import { Enemy } from "./characters/enemy";
 import { Mage } from "./characters/mage";
 import { Warrior } from "./characters/warrior";
+import { Priest } from "./characters/priest";
 
 const enemy = new Enemy("ドラゴン", 200);
 const warrior = new Warrior("アーサー", 100, "エクスカリバー");
 const magician = new Mage("メディア", 80);
+
+// 回復役は「Healable（回復できる者）」という契約の型で受け取る
+// ※後衛なので敵からは攻撃されないことにする（発展でパーティ入りさせてOK）
+const healer = new Priest("アリス", 100);
 
 // 味方パーティを「共通の型」の配列でまとめる
 const party: Character[] = [warrior, magician];
@@ -42,6 +47,10 @@ while (true) {
     console.log("パーティは全滅した...");
     break;
   }
+
+  // 回復
+  healer.heal(aliveParty[0]);
+  console.log(`${healer.getName()}は${aliveParty[0].getName()}を回復した`)
 
   // TODO 5: 全員の showStatus()
   for (const member of party) {
