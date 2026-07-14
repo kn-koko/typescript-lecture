@@ -1,26 +1,38 @@
-class CalculationError extends Error {
+class ValidationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "CalculationError";
+    this.name = "ValidationError";
   }
 }
 
-function divide(a: number, b: number): number {
-  if (b === 0) {
-    throw new CalculationError("0で割ることは出来ません");
+// 奥のロジック：不正ならガード節で早めにthrow
+function registerUser(nameInput: string, ageInput: string): void {
+  const name = nameInput.trim();
+  if (name.length === 0) {
+    throw new ValidationError("名前を入力してください。");
   }
-  return a / b;
+
+  const age = Number(ageInput);
+  if (!Number.isFinite(age) || age < 0) {
+    throw new ValidationError("年齢は0以上の数値で入力してください。");
+  }
+
+  console.log(`登録しました: ${name} (${age}歳)`);
 }
 
-try {
-  const result = divide(10, 0);
-  console.log(result);
-} catch (error) {
-  if (error instanceof CalculationError) {
-    console.log("計算のやり直し");
-  } else {
-    console.log("予期せぬエラー: ", error);
+// 画面に近い側：catchしてユーザーに伝える
+function onSubmit(nameInput: string, ageInput: string): void {
+  try {
+    registerUser(nameInput, ageInput);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) {
+      console.error(`⚠️ ${error.message}`); // 画面に出す想定
+    } else {
+      console.error("想定外のエラーが発生しました。", error);
+    }
   }
-} finally {
-  console.log("この処理は絶対に実行される");
 }
+
+onSubmit("Alice", "25");
+onSubmit("", "25");
+onSubmit("Bob", "Charlie");
