@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 8. 例外処理</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .proto-note{margin-top:20px;padding:11px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--bg-sunk);font-size:.8rem;color:var(--ink-soft);}
+  .proto-note b{color:var(--ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:8px;font-size:.96rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+  h3{font-size:1.05rem;font-weight:700;margin:22px 0 12px;}
+
+  .narration{font-family:var(--serif);font-size:1.05rem;line-height:1.9;margin:0 0 20px;padding-left:18px;border-left:3px solid var(--line-strong);}
+  .narration p{margin:0 0 1em;}.narration p:last-child{margin-bottom:0;}
+  .narration em{font-style:normal;color:var(--accent-ink);font-weight:600;font-family:var(--sans);font-size:.94em;}
+
+  figure.code{margin:0 0 20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.85rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+  .grid2 figure.code{margin:0;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+  .point ul{margin:.2em 0 0;padding-left:1.1em;}.point li{margin:.3em 0;}
+  .chapter__tag.ex{background:transparent;border:1px solid var(--accent);color:var(--accent-ink);}
+  .prob{background:var(--step-bg);border-radius:10px;padding:16px 18px;margin:0 0 18px;}
+  .prob h4{margin:0 0 8px;font-size:.95rem;color:var(--accent-ink);}
+  .prob ul{margin:0;padding-left:1.2em;font-size:.93rem;line-height:1.7;}
+  .prob code{background:var(--tag-bg);}
+  table.cmp{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:.9rem;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+  table.cmp th{background:var(--bg-sunk);font-weight:700;}
+  table.cmp td:first-child,table.cmp th:first-child{width:34%;}
+  table.cmp code{background:var(--tag-bg);}
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 8</p>
+    <h1>例外処理 — 落ちるかもしれない処理を、落とさずに扱う</h1>
+    <p>エラー（<em>例外</em>）が起きると、プログラムはその場で止まってしまう。それを <code>try-catch</code> で受け止め、<code>throw</code> で自分から投げ、<em>カスタムエラー</em>で種類を見分ける。最後はユーザー登録を例に、「実際どう使うか」まで。</p>
+    <div class="proto-note">
+      この回は動画 8-a〜8-d と <code>src/main.ts</code> の4コミット（<code>63a7a7d</code> / <code>c7ee7df</code> / <code>927c790</code> / <code>bd3b7df</code>）から作成。掲載コードは<b>すべて各コミットの実物</b>です。※この回は毎回 <code>main.ts</code> を丸ごと書き換えながら進む「使い捨ての例」中心のため、Lecture 7 までのキャラクター戦闘コードは一旦リセットされます。8-a の「try で囲む前」だけは、動画途中の状態（<b>未コミット</b>）を再現した参考コードです。
+    </div>
+</div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#c8a"><span class="n">8-a</span><span>try-catch の基礎</span><span class="d">基礎</span></a></li>
+    <li><a href="#c8b"><span class="n">8-b</span><span>throw と finally</span><span class="d">発展</span></a></li>
+    <li><a href="#c8c"><span class="n">8-c</span><span>カスタムエラーと分岐</span><span class="d">分類</span></a></li>
+    <li><a href="#c8d"><span class="n">8-d</span><span>例外処理を使う実例</span><span class="d">応用</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- 8-a -->
+  <article class="chapter" id="c8a">
+    <span class="chapter__tag">Chapter 8-a</span>
+    <h2>try-catch の基礎</h2>
+    <p class="chapter__lead">例外が起きるとプログラムは止まる。それを受け止める最初の構文。</p>
+    <blockquote class="narration">
+      <p>まず「<em>例外</em>」とは何か。下のように、JSON の形式に従っていない文字列を <code>JSON.parse</code> に渡すと——コードを書いた時点ではエラーは出ませんが、<em>実行する</em>とその行で例外が発生します。<code>JSON.parse</code> は JSON 形式の文字列を JavaScript のオブジェクトに変換する関数で、渡した文字列が不正だと「JSON として適切じゃない」と例外を投げるのです。</p>
+      <p>やっかいなのは、この手のエラーは<em>発生した所でプログラムを強制終了させる</em>こと。つまり、後ろに書いた <code>console.log</code> は<em>もう実行されません</em>。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">try で囲む前</span><span>参考・未コミット</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> obj = JSON.<span class="f">parse</span>(<span class="s">&quot;{ invalid json }&quot;</span>); <span class="c">// ここで例外 → 強制終了</span>
+console.<span class="f">log</span>(<span class="s">&quot;この行は実行されない&quot;</span>);        <span class="c">// もう到達しない</span></pre></div></figure>
+    <blockquote class="narration">
+      <p>これでは困る。そこで <em>try-catch</em> です。落ちる可能性のある処理を <code>try { }</code> で囲み、例外が起きたときにやりたいことを <code>catch (error) { }</code> に書きます。<code>try</code> の中で例外が発生すると、その先の行は飛ばして <em>catch に移り</em>、そこで受け止める。しかも——例外でクラッシュするのではなく、<code>catch</code> を抜けて<em>次の処理へ普通に進めます</em>。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre>console.<span class="f">log</span>(<span class="s">&quot;test1&quot;</span>);
+
+<span class="k">try</span> {
+  <span class="k">const</span> obj = JSON.<span class="f">parse</span>(<span class="s">&quot;{ invalid json }&quot;</span>);
+  console.<span class="f">log</span>(<span class="s">&quot;この行は実行されない&quot;</span>);
+} <span class="k">catch</span> (error) {
+  console.<span class="f">log</span>(<span class="s">&quot;エラーが発生しました: &quot;</span>, error);
+}
+
+console.<span class="f">log</span>(<span class="s">&quot;この行は実行される&quot;</span>);</pre></div></figure>
+    <blockquote class="narration">
+      <p>実行すると出力はこの順番になります。<code>try</code> の中で例外が起きても、プログラムは<em>止まらずに最後まで走りきる</em>のがポイントです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">出力される順番</span></figcaption><div class="code-scroll"><pre>test1
+エラーが発生しました:  <span class="c">// ← JSON.parse の例外を catch が受け止める（SyntaxError）</span>
+この行は実行される      <span class="c">// ← クラッシュせず最後まで到達</span></pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>例外は、発生した所で<b>プログラムを止めてしまう</b>。落ちそうな処理を <code>try</code> で囲み、<code>catch (error)</code> で受け止めれば、クラッシュを防いで後続の処理に進める。これが例外処理の一番基本の形。</div></div>
+  </article>
+
+  <!-- 8-b -->
+  <article class="chapter" id="c8b">
+    <span class="chapter__tag">Chapter 8-b</span>
+    <h2>throw と finally</h2>
+    <p class="chapter__lead">自分から例外を投げる。そして「必ず実行する」処理。</p>
+    <blockquote class="narration">
+      <p>電卓の <code>divide</code>（割り算）を思い出してください。割り算では <em>0 で割る</em>のを防がないといけません（0 で割ると <code>Infinity</code> が返り、その値で計算を続けると後続がどんどん壊れていく）。以前はこれを <code>return false</code> や <code>number | boolean</code> で表現しましたが、実はあまり良くない。もっと良い方法が<em>例外</em>です。例外には「<em>後続の処理を問答無用でキャンセルする</em>」力があるからです。</p>
+      <p><code>b</code> が 0 のときは <code>throw new Error("...")</code> で例外を投げます。<code>throw</code> は「例外を投げる」という意味で、基本は <em>Error クラスのインスタンス</em>（<code>new Error(メッセージ)</code>）を投げる、と形で覚えてください。こうすれば 0 で割る計算には絶対に進みません。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">function</span> <span class="f">divide</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">if</span> (b === <span class="n">0</span>) {
+    <span class="k">throw</span> <span class="k">new</span> <span class="f">Error</span>(<span class="s">&quot;0で割ることは出来ません&quot;</span>);
+  }
+  <span class="k">return</span> a / b;
+}
+
+<span class="k">try</span> {
+  <span class="k">const</span> result = <span class="f">divide</span>(<span class="n">10</span>, <span class="n">2</span>);
+  console.<span class="f">log</span>(result);
+} <span class="k">catch</span> (error) {
+  console.<span class="f">error</span>((error <span class="k">as</span> Error).message);
+} <span class="k">finally</span> {
+  console.<span class="f">log</span>(<span class="s">&quot;この処理は絶対に実行される&quot;</span>);
+}</pre></div></figure>
+    <blockquote class="narration">
+      <p>受け取る <code>catch</code> 側では、<code>error.message</code> でメッセージを取り出せます。ただし <code>catch</code> の <code>error</code> は <em>unknown 型</em>——「まだ何型か分からない」状態なので、そのままでは <code>message</code> を持つとは限らずエラー（赤波線）になります。今の段階では <code>(error as Error)</code> と型を指定して回避します（詳しい書き方は後の回で）。表示は <code>console.error</code> を使うと ⚠️ 付きで<em>エラーだと分かりやすく</em>なります。</p>
+      <p>そして <code>try-catch</code> の後ろには <em>finally</em> を足せます。<code>finally</code> は、<code>try</code> の中で例外が起きても起きなくても——<em>成功しても失敗しても必ず実行される</em>処理です。上の例は <code>divide(10, 2)</code> が成功するので <code>catch</code> には入りませんが、「この処理は絶対に実行される」は必ず出力されます。失敗した場合も、<code>catch</code> を通ったあと最後に <code>finally</code> を必ず通ります。</p>
+    </blockquote>
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li><code>throw new Error(...)</code> で、自分から例外を投げて後続を止められる（ガード）。</li>
+        <li><code>catch</code> の <code>error</code> は <b>unknown 型</b>（今は <code>(error as Error)</code> で回避）。</li>
+        <li><code>finally</code> は<b>成功・失敗に関わらず必ず実行</b>される。</li>
+      </ul>
+    </div></div>
+  </article>
+
+  <!-- 8-c -->
+  <article class="chapter" id="c8c">
+    <span class="chapter__tag">Chapter 8-c</span>
+    <h2>カスタムエラーと分岐</h2>
+    <p class="chapter__lead">エラーに「種類」を持たせて、種類ごとに処理を変える。</p>
+    <blockquote class="narration">
+      <p>例外にも<em>種類</em>があります。計算で起きたなら <code>CalculationError</code>、ユーザー登録で入力が不正なら <code>ValidationError</code>……。種類がまとまっていれば、同じ種類には同じ処理をした方が効率的です（例：入力エラーなら「再入力を促す」）。でも素の <code>Error</code> クラスだけだと、<em>どれがどの種類か区別できません</em>。そこで「自分でエラーの種類を定義」します。</p>
+      <p>書き方は、<code>Error</code> クラスを<em>継承</em>した新しいクラスを作るだけ。<code>constructor</code> でメッセージを受け取り <code>super(message)</code> で親（Error）に渡し、<code>this.name</code> に独自の名前を入れる——これがカスタムエラーの<em>定番形</em>で、最小単位です。<code>this.name</code> を設定しておくと、エラー表示にその名前（<code>CalculationError</code>）が出ます。使うときは <code>throw new Error(...)</code> を <code>throw new CalculationError(...)</code> に変えるだけ。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">class</span> CalculationError <span class="k">extends</span> Error {
+  <span class="k">constructor</span>(message: <span class="t">string</span>) {
+    <span class="k">super</span>(message);
+    <span class="k">this</span>.name = <span class="s">&quot;CalculationError&quot;</span>;
+  }
+}
+
+<span class="k">function</span> <span class="f">divide</span>(a: <span class="t">number</span>, b: <span class="t">number</span>): <span class="t">number</span> {
+  <span class="k">if</span> (b === <span class="n">0</span>) {
+    <span class="k">throw</span> <span class="k">new</span> <span class="f">CalculationError</span>(<span class="s">&quot;0で割ることは出来ません&quot;</span>);
+  }
+  <span class="k">return</span> a / b;
+}
+
+<span class="k">try</span> {
+  <span class="k">const</span> result = <span class="f">divide</span>(<span class="n">10</span>, <span class="n">0</span>);
+  console.<span class="f">log</span>(result);
+} <span class="k">catch</span> (error) {
+  <span class="k">if</span> (error <span class="k">instanceof</span> CalculationError) {
+    console.<span class="f">log</span>(<span class="s">&quot;計算のやり直し&quot;</span>);
+  } <span class="k">else</span> {
+    console.<span class="f">log</span>(<span class="s">&quot;予期せぬエラー: &quot;</span>, error);
+  }
+} <span class="k">finally</span> {
+  console.<span class="f">log</span>(<span class="s">&quot;この処理は絶対に実行される&quot;</span>);
+}</pre></div></figure>
+    <blockquote class="narration">
+      <p>種類ごとに処理を分けるのは <code>catch</code> の中でやります。<code>error instanceof CalculationError</code> で「その例外が <code>CalculationError</code> のインスタンスか」を判定します（<code>instanceof</code> は、インスタンスかどうかを調べる演算子）。<code>CalculationError</code> なら「計算のやり直し」のような<em>具体的な処理</em>へ。ここで <code>else</code> を書かないと、それ以外のエラーが来たとき<em>何も起きず</em>「何が起こったか分からない」状態になってしまうので、<em>else は必ず書きます</em>。</p>
+    </blockquote>
+    <div class="point"><span class="label">POINT</span><div><code>Error</code> を継承してカスタムエラーを作る（<code>super(message)</code> ＋ <code>this.name</code> の定番形）。<code>catch</code> の中で <b><code>instanceof</code> で種類を判定</b>し、種類ごとに処理を分岐する。想定外に備えて <b><code>else</code> を必ず書く</b>。</div></div>
+  </article>
+
+  <!-- 8-d -->
+  <article class="chapter" id="c8d">
+    <span class="chapter__tag">Chapter 8-d</span>
+    <h2>例外処理を使う実例</h2>
+    <p class="chapter__lead">ユーザー登録を例に、「どこで投げ、どこで受けるか」。</p>
+    <blockquote class="narration">
+      <p>最後に、例外処理が実際どこで使われるかを、<em>ユーザー登録</em>を例に見ます。主役は <code>onSubmit</code>——登録画面で名前と年齢を入力し、確定したときに動く関数のイメージです。<code>onSubmit</code> は受け取った入力をそのまま <code>registerUser</code> に渡します。</p>
+      <p><code>registerUser</code>（奥のロジック）では、まず <code>name</code> を <code>trim</code>（前後の空白を削除）し、空なら <code>ValidationError</code> を投げる。続けて <code>age</code> を <code>Number</code> に変換し、有効な数値でない or 負の数なら <code>ValidationError</code> を投げる。両方のガードをくぐり抜けたときだけ「登録しました」に進みます。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">class</span> ValidationError <span class="k">extends</span> Error {
+  <span class="k">constructor</span>(message: <span class="t">string</span>) {
+    <span class="k">super</span>(message);
+    <span class="k">this</span>.name = <span class="s">&quot;ValidationError&quot;</span>;
+  }
+}
+
+<span class="c">// 奥のロジック：不正ならガード節で早めにthrow</span>
+<span class="k">function</span> <span class="f">registerUser</span>(nameInput: <span class="t">string</span>, ageInput: <span class="t">string</span>): <span class="k">void</span> {
+  <span class="k">const</span> name = nameInput.<span class="f">trim</span>();
+  <span class="k">if</span> (name.length === <span class="n">0</span>) {
+    <span class="k">throw</span> <span class="k">new</span> <span class="f">ValidationError</span>(<span class="s">&quot;名前を入力してください。&quot;</span>);
+  }
+
+  <span class="k">const</span> age = <span class="f">Number</span>(ageInput);
+  <span class="k">if</span> (!Number.<span class="f">isFinite</span>(age) || age &lt; <span class="n">0</span>) {
+    <span class="k">throw</span> <span class="k">new</span> <span class="f">ValidationError</span>(<span class="s">&quot;年齢は0以上の数値で入力してください。&quot;</span>);
+  }
+
+  console.<span class="f">log</span>(<span class="s">`登録しました: ${name} (${age}歳)`</span>);
+}
+
+<span class="c">// 画面に近い側：catchしてユーザーに伝える</span>
+<span class="k">function</span> <span class="f">onSubmit</span>(nameInput: <span class="t">string</span>, ageInput: <span class="t">string</span>): <span class="k">void</span> {
+  <span class="k">try</span> {
+    <span class="f">registerUser</span>(nameInput, ageInput);
+  } <span class="k">catch</span> (error: <span class="t">unknown</span>) {
+    <span class="k">if</span> (error <span class="k">instanceof</span> ValidationError) {
+      console.<span class="f">error</span>(<span class="s">`⚠️ ${error.message}`</span>); <span class="c">// 画面に出す想定</span>
+    } <span class="k">else</span> {
+      console.<span class="f">error</span>(<span class="s">&quot;想定外のエラーが発生しました。&quot;</span>, error);
+    }
+  }
+}
+
+<span class="f">onSubmit</span>(<span class="s">&quot;Alice&quot;</span>, <span class="s">&quot;25&quot;</span>);
+<span class="f">onSubmit</span>(<span class="s">&quot;&quot;</span>, <span class="s">&quot;25&quot;</span>);
+<span class="f">onSubmit</span>(<span class="s">&quot;Bob&quot;</span>, <span class="s">&quot;Charlie&quot;</span>);</pre></div></figure>
+    <blockquote class="narration">
+      <p>ここで大事な考え方が「<em>ガード節</em>」。不正な入力＝<em>もう失敗が確定した状態</em>です。名前が空なのに年齢を検証しても意味がない。だから、失敗が確定した時点でさっさと例外を投げて<em>早めに脱出</em>させ、後続の処理は実行しない——これが安全なコードの基本です。</p>
+      <p>投げた例外を受け止める（<em>エラーハンドリング</em>する）のは、<em>画面に近い <code>onSubmit</code> 側</em>です。<code>catch</code> した <code>error</code>（unknown 型）が <code>ValidationError</code> のインスタンスなら、そのメッセージを画面に出す想定（ここでは <code>console.error</code>）。一方それ以外の「<em>想定外のエラー</em>」は、扱いを分けます。想定外のエラーは中身が読めない（外部ライブラリの英文メッセージなど）ので、それをそのまま画面に出すのは怖いし、ユーザーフレンドリーでもなく、機密情報が混じる恐れもある。だから「<em>自分で制御できている <code>ValidationError</code></em>」と「想定外のエラー」で処理を分けるわけです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">実行結果</span><span>3通りの入力</span></figcaption><div class="code-scroll"><pre><span class="f">onSubmit</span>(<span class="s">&quot;Alice&quot;</span>, <span class="s">&quot;25&quot;</span>);      <span class="c">// 登録しました: Alice (25歳)</span>
+<span class="f">onSubmit</span>(<span class="s">&quot;&quot;</span>, <span class="s">&quot;25&quot;</span>);           <span class="c">// ⚠️ 名前を入力してください。</span>
+<span class="f">onSubmit</span>(<span class="s">&quot;Bob&quot;</span>, <span class="s">&quot;Charlie&quot;</span>);  <span class="c">// ⚠️ 年齢は0以上の数値で入力してください。</span></pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>想定できるエラーは<b>カスタムエラーで種別を与え</b>、画面に近い側（境界）で <code>catch</code> して具体的に処理する。<b>想定外のエラーとは扱いを分ける</b>。失敗が確定したら早めに <code>throw</code> して脱出（<b>ガード節</b>）。この設計は UX に直結し、うまくできているほど良いプログラム。</div></div>
+  </article>
+
+</main>
+
+</body>
+</html>

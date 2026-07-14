@@ -11,7 +11,8 @@ imgbase = pathlib.Path('docs/images')
 KEYWORDS = {'export','default','class','constructor','this','return','private','public',
     'protected','readonly','new','const','let','var','type','function','if','else','for',
     'while','import','from','extends','implements','abstract','override','super','interface',
-    'typeof','as','void','true','false','null','undefined','get','set'}
+    'typeof','as','void','true','false','null','undefined','get','set',
+    'try','catch','finally','throw','instanceof'}
 TYPES = {'string','number','boolean','void','any','unknown','never','object'}
 
 tok = re.compile(r'(//[^\n]*)|(`(?:[^`\\]|\\.)*`)|("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_$]*)|(\s+)|([^\sA-Za-z0-9_$])', re.S)
