@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen:form": "node tools/quiz-to-google-form.ts"
   },
   "devDependencies": {
     "typescript": "~6.0.2",
