@@ -25,6 +25,10 @@ export abstract class Character {
     }
   }
 
+  public takeHeal(amount: number):void {
+    this.hp +=amount;
+  }
+
   isDead(): boolean {
     return this.hp <= 0;
   }
