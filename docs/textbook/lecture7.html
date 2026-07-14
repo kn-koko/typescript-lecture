@@ -73,6 +73,11 @@
   .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
   .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
   .point ul{margin:.2em 0 0;padding-left:1.1em;}.point li{margin:.3em 0;}
+  .chapter__tag.ex{background:transparent;border:1px solid var(--accent);color:var(--accent-ink);}
+  .prob{background:var(--step-bg);border-radius:10px;padding:16px 18px;margin:0 0 18px;}
+  .prob h4{margin:0 0 8px;font-size:.95rem;color:var(--accent-ink);}
+  .prob ul{margin:0;padding-left:1.2em;font-size:.93rem;line-height:1.7;}
+  .prob code{background:var(--tag-bg);}
   table.cmp{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:.9rem;}
   table.cmp th,table.cmp td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
   table.cmp th{background:var(--bg-sunk);font-weight:700;}
@@ -96,6 +101,7 @@
     <li><a href="#c7b"><span class="n">7-b</span><span>型定義としての interface</span><span class="d">型</span></a></li>
     <li><a href="#c7c"><span class="n">7-c</span><span>クラスと interface（implements）</span><span class="d">実装</span></a></li>
     <li><a href="#c7d"><span class="n">7-d</span><span>interface と継承の違い</span><span class="d">比較</span></a></li>
+    <li><a href="#cex"><span class="n">演習</span><span>Reviveable / HolyPriest クラス</span><span class="d">課題</span></a></li>
   </ol>
 </nav>
 
@@ -250,6 +256,94 @@ bob.<span class="f">heal</span>(alice);</pre></div></figure>
       <tr><td>使いどころ</td><td>全クラス共通のメソッド（<code>attack</code>）</td><td>特定クラスだけの能力（<code>heal</code>）</td></tr>
     </table>
     <div class="point"><span class="label">POINT</span><div><b>extends＝縦の系譜（1つの親）／implements＝横断的な性質（複数付与可）</b>。共通のメソッドは親クラスにまとめ、限定的な能力は interface で必要なクラスにだけ付ける。これが継承と interface の使い分け。</div></div>
+  </article>
+
+
+  <!-- ===================== 演習 ===================== -->
+  <article class="chapter" id="cex">
+    <span class="chapter__tag ex">演習</span>
+    <h2>演習：「蘇生できる」を interface で表現する</h2>
+    <p class="chapter__lead">複数の interface を implements し、限定的な能力を横断的に付ける——7-d の使い分けを手を動かして確かめます。</p>
+
+    <h3>演習 1 ・ Reviveable インターフェースと HolyPriest クラス</h3>
+    <div class="prob">
+      <h4>問題</h4>
+      <ul>
+        <li>「蘇生できる」を表す <code>Reviveable</code> インターフェースを作る（<code>revive(target: Character): void</code>）。</li>
+        <li>上位僧侶 <code>HolyPriest</code> クラスを作る：<code>Character</code> を <b>extends</b> しつつ、<code>Healable</code> と <code>Reviveable</code> の<b>両方を implements</b>。
+          <ul>
+            <li><code>attack</code>：攻撃できない旨をログに出す</li>
+            <li><code>heal(target)</code>：<code>target.takeHeal(15)</code></li>
+            <li><code>revive(target)</code>：<code>target.isDead()</code> なら大きく回復させて蘇生、生きていれば「まだ倒れていない」</li>
+          </ul>
+        </li>
+        <li><code>main.ts</code> で、倒れた味方を <code>HolyPriest</code> が蘇生できることを確認する。</li>
+      </ul>
+    </div>
+    <div class="grid2">
+      <figure class="code"><figcaption><span class="file">src/characters/reviveable.ts</span><span>出題時の雛形</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> <span class="k">type</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">interface</span> Reviveable {
+  <span class="c">// インターフェースを定義する</span>
+}</pre></div></figure>
+      <figure class="code"><figcaption><span class="file">src/characters/holy-priest.ts</span><span>出題時の雛形</span></figcaption><div class="code-scroll"><pre><span class="c">// extends, implements を正しく設定する</span>
+<span class="k">export</span> <span class="k">class</span> HolyPriest <span class="k">extends</span> XXX <span class="k">implements</span> XXX {
+  <span class="f">attack</span>() {
+    <span class="c">// 実装する</span>
+  }
+
+  <span class="f">heal</span>(target: Character) {
+    <span class="c">// 実装する</span>
+  }
+
+  <span class="f">revive</span>(target: Character) {
+    <span class="c">// 実装する</span>
+  }
+}</pre></div></figure>
+    </div>
+    <figure class="code"><figcaption><span class="file">src/characters/reviveable.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> <span class="k">type</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">interface</span> Reviveable {
+  <span class="f">revive</span>(target: Character): <span class="k">void</span>;
+}</pre></div></figure>
+    <figure class="code"><figcaption><span class="file">src/characters/holy-priest.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">import</span> { Character } <span class="k">from</span> <span class="s">&quot;./character.ts&quot;</span>;
+<span class="k">import</span> <span class="k">type</span> { Healable } <span class="k">from</span> <span class="s">&quot;./healable.ts&quot;</span>;
+<span class="k">import</span> <span class="k">type</span> { Reviveable } <span class="k">from</span> <span class="s">&quot;./reviveable.ts&quot;</span>;
+
+<span class="k">export</span> <span class="k">class</span> HolyPriest <span class="k">extends</span> Character <span class="k">implements</span> Healable, Reviveable {
+  <span class="f">attack</span>() {
+    console.<span class="f">log</span>(<span class="s">`${this.name}は攻撃できない`</span>);
+  }
+
+  <span class="f">heal</span>(target: Character) {
+    target.<span class="f">takeHeal</span>(<span class="n">15</span>);
+  }
+
+  <span class="f">revive</span>(target: Character) {
+    <span class="k">if</span> (target.<span class="f">isDead</span>()) {
+      target.<span class="f">takeHeal</span>(<span class="n">50</span>);
+      console.<span class="f">log</span>(<span class="s">`${target.getName()}を蘇生した！`</span>);
+    } <span class="k">else</span> {
+      console.<span class="f">log</span>(<span class="s">`${target.getName()}はまだ倒れていない`</span>);
+    }
+  }
+}</pre></div></figure>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span><span>使い方の例</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> alice = <span class="k">new</span> <span class="f">Priest</span>(<span class="s">&quot;Alice&quot;</span>, <span class="n">100</span>);
+<span class="k">const</span> zena = <span class="k">new</span> <span class="f">HolyPriest</span>(<span class="s">&quot;Zena&quot;</span>, <span class="n">120</span>);
+
+alice.<span class="f">takeDamage</span>(<span class="n">999</span>); <span class="c">// Alice が倒れる</span>
+zena.<span class="f">revive</span>(alice);    <span class="c">// Alice を蘇生した！</span></pre></div></figure>
+
+    <h3>演習 2 ・ Healable[] でまとめて回復（発展）</h3>
+    <div class="prob">
+      <h4>問題（授業の課題には含まれない追加問題です）</h4>
+      <ul>
+        <li><code>Healable</code> を実装するクラス（<code>Priest</code>・<code>HolyPriest</code>）のインスタンスを <code>Healable[]</code> の配列にまとめ、全員で一斉にヒールする。</li>
+      </ul>
+    </div>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span><span>解答例</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> healers: Healable[] = [<span class="k">new</span> <span class="f">Priest</span>(<span class="s">&quot;Alice&quot;</span>, <span class="n">100</span>), <span class="k">new</span> <span class="f">HolyPriest</span>(<span class="s">&quot;Zena&quot;</span>, <span class="n">120</span>)];
+healers.<span class="f">forEach</span>((h) =&gt; h.<span class="f">heal</span>(bob)); <span class="c">// インターフェース型でまとめて扱える（多態）</span></pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>クラスは違っても <code>Healable</code> という<b>共通の契約</b>を持つので、<code>Healable[]</code> にまとめて同じように扱える（多態）。つまずきやすいポイントの解説は<a href="../qa/lecture7.html">第7回アンケート回答</a>にまとめています。</div></div>
   </article>
 
 </main>

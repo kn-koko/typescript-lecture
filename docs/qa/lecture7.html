@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第7回 アンケート回答 — TypeScript 講座</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .masthead .meta{margin-top:18px;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono);}
+  .masthead .meta a{color:var(--accent-ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:8px 12px;border-radius:8px;font-size:.94rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+
+  .item{border-top:1px solid var(--line);padding-top:22px;margin-top:22px;}
+  .item:first-of-type{border-top:0;margin-top:0;padding-top:4px;}
+  .item h3{font-size:1.08rem;font-weight:700;margin:0 0 10px;line-height:1.55;}
+  .item h3 .qnum{font-family:var(--mono);font-size:.88rem;color:var(--accent);margin-right:.7em;}
+  .item p{margin:0 0 14px;}
+  .item p:last-child{margin-bottom:0;}
+  .item ul{margin:0 0 14px;padding-left:1.3em;}
+  .item li{margin:.3em 0;}
+
+  figure.code{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.85rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0 14px;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 24px 64px;color:var(--ink-faint);font-size:.82rem;line-height:1.7;}
+  footer .note{padding:14px 16px;background:var(--bg-sunk);border-radius:10px;}
+  footer p{margin:0 0 .3em;}
+
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 7</p>
+    <h1>第7回「interface」アンケートへの回答</h1>
+    <p>第7回「interface」のアンケートへのご回答ありがとうございました。いただいた質問への回答と、練習問題でつまずきが多かったポイントの解説をまとめます。「ほかの受講生がどんな疑問を持っているのか知りたい」という声があったので、質問とつまずきどころは匿名でこのページに共有していきます。</p>
+    <p class="meta">回答 9名 ／ 学習時間 〜1h×1・〜2h×6・〜3h×2<br>← <a href="../textbook/">教材目次</a> ／ 教材本編：<a href="../textbook/lecture7.html">Lecture 7 — interface</a></p>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#pitfalls"><span class="n">§</span><span>練習問題でつまずきが多かったところ</span><span class="d">解説</span></a></li>
+    <li><a href="#q1"><span class="n">Q1</span><span>interface はポケモンでいう「技」のようなイメージ？</span><span class="d">概念</span></a></li>
+    <li><a href="#q2"><span class="n">Q2</span><span>キャラクターは 1ファイル？ それとも new で増やす？</span><span class="d">設計</span></a></li>
+    <li><a href="#q3"><span class="n">Q3</span><span>Enemy を継承して新しい敵を作ったのは合っている？</span><span class="d">設計</span></a></li>
+    <li><a href="#q4"><span class="n">Q4</span><span>interface はどんな場面で使う？</span><span class="d">概念</span></a></li>
+    <li><a href="#q5"><span class="n">Q5</span><span>細かい記述のルールが覚えきれない</span><span class="d">学習法</span></a></li>
+    <li><a href="#q6"><span class="n">Q6</span><span>AIツールの利用について</span><span class="d">運用</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- つまずき解説 -->
+  <article class="chapter" id="pitfalls">
+    <span class="chapter__tag">つまずき解説</span>
+    <h2>練習問題でつまずきが多かったところ</h2>
+    <p class="chapter__lead">今回いちばん多かったのは「蘇生（revive）をどう実装するか」でした。関連するつまずきをまとめて解説します。</p>
+
+    <div class="item">
+      <h3>「蘇生」はどう実装する？ — 特別な仕組みは要らない</h3>
+      <p>「倒れている」とは <code>hp</code> が 0 になった状態のことです。つまり<b>蘇生＝倒れているキャラの HP を回復させること</b>なので、蘇生専用の新しい仕組みは必要ありません。<code>isDead()</code> で倒れているかを確認してから、いつもの <code>takeHeal</code> で回復させれば、それがそのまま蘇生になります。</p>
+      <figure class="code"><figcaption><span class="file">revive の実装（HolyPriest 内）</span></figcaption><div class="code-scroll"><pre><span class="f">revive</span>(target: Character) {
+  <span class="k">if</span> (target.<span class="f">isDead</span>()) {
+    target.<span class="f">takeHeal</span>(<span class="n">50</span>); <span class="c">// 倒れていたら大きく回復させて蘇生</span>
+    console.<span class="f">log</span>(<span class="s">`${target.getName()}を蘇生した！`</span>);
+  } <span class="k">else</span> {
+    console.<span class="f">log</span>(<span class="s">`${target.getName()}はまだ倒れていない`</span>);
+  }
+}</pre></div></figure>
+    </div>
+
+    <div class="item">
+      <h3>回復量は「現在のHP＋数値」で計算するべき？</h3>
+      <p>その必要はありません。呼ぶ側は「いくら回復させるか」だけを渡し、<b>HP を実際に増やす計算は、回復される側のキャラクター自身（<code>takeHeal</code> の中）に任せます</b>。<code>attack</code> と <code>takeDamage</code> の関係とまったく同じで、これがカプセル化の考え方です。</p>
+    </div>
+
+    <div class="item">
+      <h3>最大HPを超えて回復してしまう</h3>
+      <p>上限の管理も <code>takeHeal</code> の中でやるのがきれいです。<code>Math.min</code> を使うと1行で書けます（<code>if</code> 文で書いても、もちろんOKです）。</p>
+      <figure class="code"><figcaption><span class="file">src/characters/character.ts（takeHeal に上限を追加）</span></figcaption><div class="code-scroll"><pre><span class="f">takeHeal</span>(amount: <span class="t">number</span>) {
+  <span class="k">this</span>.hp = Math.<span class="f">min</span>(<span class="k">this</span>.hp + amount, <span class="k">this</span>.maxHp); <span class="c">// maxHp を超えない</span>
+}</pre></div></figure>
+    </div>
+
+    <div class="item">
+      <h3>「〇〇される側」のメソッドが必要なことに気づけなかった</h3>
+      <p>新しい能力を作るときは、<b>「する側」と「される側」をペアで考える</b>癖をつけると設計しやすくなります。<code>attack</code> する側がいれば <code>takeDamage</code> される側がいる——これと同じで、<code>heal</code> には <code>takeHeal</code> がペアになります。「誰が何をして、誰が何をされるか」を先に書き出してからコードにするのがおすすめです。</p>
+    </div>
+
+    <div class="item">
+      <h3>「AがBを蘇生した」とログに出したい</h3>
+      <p><code>name</code> は <code>protected</code> なので、他のキャラクターから直接読むことはできません。そこで <code>getName()</code> のような取得用メソッド（getter）を作って読む——まさに前回やったアクセス修飾子の実践です。ここに自力でたどり着けたなら、前回の内容がしっかり身についています。</p>
+    </div>
+
+    <div class="item">
+      <h3><code>implements</code> のエラーが解決できない</h3>
+      <p>よく出るのは <code>Class 'HolyPriest' incorrectly implements interface 'Healable'</code> のようなエラーです。これは「<b>interface で約束したメソッドがまだ足りない、または引数・戻り値の型が合っていない</b>」という意味です。interface に書いたメソッドをすべて、同じ形で実装できているか確認してみてください。解消できなかった部分は、次回の授業でも扱います。</p>
+    </div>
+
+    <div class="item">
+      <h3>解答例</h3>
+      <p>問題と完全な解答例は、教材本編の<a href="../textbook/lecture7.html#cex">演習章（Reviveable / HolyPriest クラス）</a>に掲載しています。</p>
+    </div>
+  </article>
+
+  <!-- Q&A -->
+  <article class="chapter">
+    <span class="chapter__tag">Q &amp; A</span>
+    <h2>いただいた質問への回答</h2>
+    <p class="chapter__lead">アンケートでいただいた質問に、まとめて回答します。</p>
+
+    <div class="item" id="q1">
+      <h3><span class="qnum">Q1</span>interface はポケモンでいう「技」のようなイメージ？</h3>
+      <p>とても良い線です。より正確に言うと、interface は技そのものではなく<b>「この技が使えます」という約束（宣言）</b>です。技の中身（実装）は、それぞれのクラスが自分で書きます。</p>
+      <p><code>Healable</code> を <code>implements</code> した <code>Priest</code> と <code>HolyPriest</code> は、どちらも必ず <code>heal</code> を持っていることが保証されますが、回復量や動きはクラスごとに違っていて構いません。「技の名前と使い方だけ決まっていて、実際の効果は使い手ごとに実装する」——このイメージで大丈夫です。</p>
+      <div class="point"><span class="label">補足</span><div>RPGに馴染みがない方へ：例え話はポケモンでも何でもOKです。自分のよく知っている世界に置き換えて考えられるのは、むしろ理解が進んでいる証拠なので、どんどんやってください。</div></div>
+    </div>
+
+    <div class="item" id="q2">
+      <h3><span class="qnum">Q2</span>キャラクターを増やすときは、1キャラ1ファイル？ それとも <code>new</code> で増やす？</h3>
+      <p>「サトシのピカチュウとか、野生のピカチュウとか、ピカチュウはいっぱいいるじゃないですか」——素晴らしい質問で、これは<b>クラスとインスタンスの違い</b>そのものです。</p>
+      <ul>
+        <li><b>クラス＝種類の設計図</b>：「ピカチュウ」という種族</li>
+        <li><b>インスタンス＝個体</b>：サトシのピカチュウ、野生のピカチュウ</li>
+      </ul>
+      <p>なので、両方を使い分けます。<b>新しい種類</b>（リザードンなど）を追加するときはクラスを作り（1クラス1ファイルにするのはこの講座の慣習です）、<b>同じ種類の個体</b>を増やすときは <code>new</code> でインスタンスを作ります。個体ごとの違いはコンストラクタの引数で表現します。</p>
+      <figure class="code"><figcaption><span class="file">同じクラスから個体を増やす</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> ashPikachu  = <span class="k">new</span> <span class="f">Pikachu</span>(<span class="s">&quot;サトシのピカチュウ&quot;</span>, <span class="n">25</span>);
+<span class="k">const</span> wildPikachu = <span class="k">new</span> <span class="f">Pikachu</span>(<span class="s">&quot;野生のピカチュウ&quot;</span>, <span class="n">5</span>);</pre></div></figure>
+      <p>サトシのピカチュウと野生のピカチュウは「同じ <code>Pikachu</code> クラスから作った、別のインスタンス」です。授業で <code>new Priest(&quot;Alice&quot;, 100)</code> と名前を渡していたのも同じ理屈です。</p>
+    </div>
+
+    <div class="item" id="q3">
+      <h3><span class="qnum">Q3</span>前回の課題で、Enemy クラスを継承して新しい敵を作ったのは合っている？</h3>
+      <p>合っているかどうかは「その敵が何をするか」で決まります。判断の目安は次の通りです。</p>
+      <ul>
+        <li><b>強さ（HP・攻撃力など数値）が違うだけ</b> → 同じクラスから <code>new</code> で個体を作れば十分</li>
+        <li><b>行動（メソッドの中身や独自の能力）が違う</b> → 継承して override するのが活きる</li>
+      </ul>
+      <p>どちらで書いても、動いていれば「間違い」ではありません。継承を選んだこと自体は、行動の違う敵を作るための正しい選択肢のひとつです。</p>
+    </div>
+
+    <div class="item" id="q4">
+      <h3><span class="qnum">Q4</span>interface はどんな場面で使う？ もう一度説明してほしい</h3>
+      <p><b>次回の授業で改めて復習します。</b>先にポイントだけまとめると、interface が向いているのは「<b>一部のクラスにだけ、共通の能力を横断的に持たせたいとき</b>」です。</p>
+      <ul>
+        <li>全員が持つもの（<code>attack</code>、<code>hp</code>）→ 親クラス <code>Character</code> に</li>
+        <li>特定の職業だけが持つ能力（<code>heal</code>、<code>revive</code>）→ interface に</li>
+      </ul>
+      <p>継承（<code>extends</code>）は親を1つしか選べませんが、<code>implements</code> は複数できます。だから <code>HolyPriest</code> のように「回復もできて、蘇生もできる」を表現できる——ここが interface の強みです。詳しくは<a href="../textbook/lecture7.html#c7d">教材本編の 7-d</a> も参照してください。</p>
+    </div>
+
+    <div class="item" id="q5">
+      <h3><span class="qnum">Q5</span>細かい記述のルールが覚えきれない</h3>
+      <p>暗記は不要です。押さえるのは <code>class HolyPriest extends Character implements Healable, Reviveable</code> という形だけで、細部はエディタの補完とエラーメッセージが教えてくれます。<a href="../textbook/lecture7.html">教材ページ</a>をリファレンスとして手元に置いて、書きながら慣れていけば十分です。</p>
+    </div>
+
+    <div class="item" id="q6">
+      <h3><span class="qnum">Q6</span>AIツールの利用について（オプトアウトの設定）</h3>
+      <p>方針は「入力した内容が学習データとして使われない設定（オプトアウト）を有効にした上で利用する」ことです。個別のツールや設定がこの条件を満たしているかは製品ごとに異なり判断が難しいため、<b>ICTS の案内・窓口で確認してください</b>。</p>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <div class="note">
+    <p>回答内容は個人が特定できない形でまとめています。</p>
+    <p>解決しなかった疑問やエラーは、次回の授業・アンケートで遠慮なく聞いてください。</p>
+  </div>
+</footer>
+
+</body>
+</html>
