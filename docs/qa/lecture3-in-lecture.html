@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>授業内アンケート回答 — TypeScript 講座</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .masthead .meta{margin-top:14px;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:8px 12px;border-radius:8px;font-size:.94rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+
+  .item{border-top:1px solid var(--line);padding-top:22px;margin-top:22px;}
+  .item:first-of-type{border-top:0;margin-top:0;padding-top:4px;}
+  .item h3{font-size:1.08rem;font-weight:700;margin:0 0 10px;line-height:1.55;}
+  .item h3 .qnum{font-family:var(--mono);font-size:.88rem;color:var(--accent);margin-right:.7em;}
+  .item p{margin:0 0 14px;}
+  .item p:last-child{margin-bottom:0;}
+  .item ul,.item ol{margin:0 0 14px;padding-left:1.4em;}
+  .item li{margin:.3em 0;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .stats{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden;}
+  .stats .row{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:baseline;padding:12px 16px;border-top:1px solid var(--line);font-size:.92rem;}
+  .stats .row:first-child{border-top:0;}
+  .stats .row .h{flex:none;width:11em;font-weight:700;font-size:.88rem;}
+  .stats .row span b{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent-ink);}
+  .stats .row span{color:var(--ink-soft);white-space:nowrap;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0 14px;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+
+  .links{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;}
+  .linkcard{display:block;padding:13px 17px;background:var(--surface);border:1px solid var(--line);border-radius:10px;text-decoration:none;transition:border-color .15s;}
+  .linkcard:hover{border-color:var(--accent);}
+  .linkcard .t{font-weight:700;font-size:.96rem;color:var(--ink);}
+  .linkcard .u{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);word-break:break-all;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 24px 64px;color:var(--ink-faint);font-size:.85rem;line-height:1.7;}
+  footer .note{padding:14px 16px;background:var(--bg-sunk);border-radius:10px;}
+  footer p{margin:0 0 .3em;}
+
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}.stats .row .h{width:100%;}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · 授業内アンケート</p>
+    <h1>授業内アンケート（6/30実施）への回答</h1>
+    <p>研修の進め方についてのアンケートへのご回答ありがとうございました。いただいた要望・不安へのまとめての回答と、全体の集計結果を共有します。「自分の理解度が周りと比べてどうなのか分からない」という声もあったので、まず集計から見てみてください。</p>
+    <p class="meta">回答 22名 ／ ← <a href="../textbook/">教材目次</a></p>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#stats"><span class="n">§</span><span>集計結果</span><span class="d">共有</span></a></li>
+    <li><a href="#textbook"><span class="n">§</span><span>テキスト教材を公開しました</span><span class="d">お知らせ</span></a></li>
+    <li><a href="#q1"><span class="n">Q1</span><span>動画の公開タイミングを早くしてほしい</span><span class="d">運用</span></a></li>
+    <li><a href="#q2"><span class="n">Q2</span><span>課題で詰まると先に進めなくなりそう</span><span class="d">進め方</span></a></li>
+    <li><a href="#q3"><span class="n">Q3</span><span>AIに頼らないと1から書けないのが不安</span><span class="d">学習法</span></a></li>
+    <li><a href="#q4"><span class="n">Q4</span><span>自分がどれだけ理解できているのか分からない</span><span class="d">学習法</span></a></li>
+    <li><a href="#q5"><span class="n">Q5</span><span>Git・GitHub が不安</span><span class="d">内容</span></a></li>
+    <li><a href="#q6"><span class="n">Q6</span><span>クラスのファイルが増えて頭がパンクする</span><span class="d">内容</span></a></li>
+    <li><a href="#q7"><span class="n">Q7</span><span>継承の書き方が、答えを見ても理解しきれない</span><span class="d">内容</span></a></li>
+    <li><a href="#q8"><span class="n">Q8</span><span>main.ts が何をしているのか分からない</span><span class="d">内容</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- 集計 -->
+  <article class="chapter" id="stats">
+    <span class="chapter__tag">集計結果</span>
+    <h2>全体の集計</h2>
+    <p class="chapter__lead">回答22名。個人が特定されない集計のみ共有します。</p>
+    <div class="stats">
+      <div class="row"><span class="h">「クラス」以降の理解度</span>
+        <span>〜30% <b>4名</b></span><span>〜50% <b>9名</b></span><span>〜70% <b>8名</b></span><span>〜90% <b>1名</b></span>
+      </div>
+      <div class="row"><span class="h">週の学習時間</span>
+        <span>〜1時間 <b>1名</b></span><span>〜2時間 <b>10名</b></span><span>〜3時間 <b>7名</b></span><span>3時間〜 <b>4名</b></span>
+      </div>
+      <div class="row"><span class="h">今の進め方について</span>
+        <span>今のほうがよい <b>16名</b></span><span>どちらでもよい <b>5名</b></span><span>以前のほうがよい <b>1名</b></span>
+      </div>
+    </div>
+    <p>理解度は「〜50%」「〜70%」のあたりに大半が集まっています。つまり、「ふんわりとしか理解できていない気がする」のは、あなただけではなく<b>今の全員の標準的な状態</b>です。この段階で完璧に説明できる必要はないので、安心して手を動かし続けてください。</p>
+    <p>進め方（座学はオンデマンド動画、演習は研修内）は「今のほうがよい」が大半でした。「見返せる」「自分のペースで止めて調べられる」という理由が多かったので、この形を続けます。</p>
+  </article>
+
+  <!-- お知らせ -->
+  <article class="chapter" id="textbook">
+    <span class="chapter__tag">お知らせ</span>
+    <h2>テキスト教材を公開しました</h2>
+    <p class="chapter__lead">アンケートの要望に応えたお知らせです。</p>
+
+    <div class="item">
+      <h3>「動画の内容にリンクしたテキスト資料があれば」→ 作りました</h3>
+      <p>「動画は集中していないと内容が追えないので、隙間時間用にテキスト資料がほしい」という要望をいただきました。もっともな要望だと思ったので、<b>動画の内容をそのままテキスト化した教材</b>を公開しました。</p>
+      <div class="links">
+        <a class="linkcard" href="../textbook/">
+          <span class="t">TypeScript 講座 — テキスト教材（全8冊）</span><br>
+          <span class="u">各Lectureが動画と同じ構成。実際のコードと操作画面のスクリーンショット付き</span>
+        </a>
+      </div>
+      <p>通勤中や休憩時間など、動画を見にくい場面ではこちらを使ってください。動画とテキストで同じ内容を2周すると定着もしやすいです。</p>
+    </div>
+
+    <div class="item">
+      <h3>「前回以前の動画を Slack を遡らずに見たい」→ 再生リストがあります</h3>
+      <p>講義動画はすべて YouTube の再生リストにまとまっています。リンクは案内済みの研修ページ（Notion）の「Contents」にあるので、Slack を遡らなくてもそこからいつでも全部見られます。</p>
+    </div>
+
+    <div class="item">
+      <h3>「作業する動画か、聴くだけでよい動画か分かると嬉しい」→ 教材のタグが目安になります</h3>
+      <p><a href="../textbook/">テキスト教材の目次</a>には、各回に「<b>操作</b>／<b>コード</b>／<b>概念</b>」のタグが付いています。これがそのまま目安になります。</p>
+      <ul>
+        <li><b>操作</b> … 手を動かしながら見る回（環境構築・GitHub操作など）</li>
+        <li><b>コード</b> … 画面のコードを追いながら見る回</li>
+        <li><b>概念</b> … 考え方の説明が中心で、聴くだけでも掴みやすい回</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- Q&A -->
+  <article class="chapter">
+    <span class="chapter__tag">Q &amp; A</span>
+    <h2>いただいた声への回答</h2>
+    <p class="chapter__lead">進め方への要望と、共通して多かった不安にまとめて回答します。</p>
+
+    <div class="item" id="q1">
+      <h3><span class="qnum">Q1</span>動画の公開をもっと早く・平日のうちにしてほしい</h3>
+      <p>「土日は時間が取れないので平日に見たい」「公休の関係で公開が遅いと課題が間に合わない」という声をいただきました。確約はできませんが、<b>できるだけ早め（平日のうち）の公開を心がけます</b>。間に合わなかった週は、遠慮なくアンケートや授業内でその旨を伝えてください。</p>
+    </div>
+
+    <div class="item" id="q2">
+      <h3><span class="qnum">Q2</span>オンデマンドだと、課題で詰まったら先に進めなくなりそう</h3>
+      <p>詰まること自体は織り込み済みなので、<b>詰まったまま止まらずに、その状態のまま共有してください</b>。「どこが分からないか」をうまく言語化できなくても、「動画◯-◯のここで手が止まった」「このエラーが消えない」で十分質問になります。エラー文はそのまま貼ってもらえるのがいちばん助かります。アンケート・授業内のどちらでも構いません。</p>
+    </div>
+
+    <div class="item" id="q3">
+      <h3><span class="qnum">Q3</span>AIに頼らないと1からコードを書けないのが不安</h3>
+      <p>同じ不安を複数の方が書いてくれました。まず、この不安を感じられているのは<b>学習が進んでいる証拠</b>です（写しているだけの段階では、この不安は出てきません）。そのうえで、おすすめの練習を2つ：</p>
+      <ul>
+        <li><b>「そらで書く」練習</b> … 何も見ずに <code>Character</code> クラスとその継承先を書けるか試す。書けなかった箇所が「まだ身についていない箇所」の正確なリストになります。</li>
+        <li><b>AIの使い方を「書かせる」から「説明させる」に寄せる</b> … コードを生成させる代わりに、「このエラーの意味を説明して」「この1行は何をしている？」と聞く使い方にすると、AIを使うほど理解が深まる方向に働きます。</li>
+      </ul>
+      <p>研修の課題は「自力で書く量を確保する」ための場でもあるので、課題ではできるだけ自分の手で書いてみてください。</p>
+    </div>
+
+    <div class="item" id="q4">
+      <h3><span class="qnum">Q4</span>自分がどれだけ理解できているのか分からない・何が分からないのか分からない</h3>
+      <p>冒頭の集計のとおり、理解度の自己評価は5〜7割のあたりに全員が固まっています。<b>「全体的にふんわり」は今の標準状態</b>です。そのうえで、理解度を測る道具を2つ用意しています。</p>
+      <ul>
+        <li><b>小テスト</b> … 無記名なので、成績とは無関係に「自分がどこまで分かっているか」の確認に使ってください。間違えた問題が、そのまま復習リストになります。</li>
+        <li><b>「そらで書く」テスト</b> … Q3と同じ方法です。「読めば分かる」と「書ける」の差が、いちばん正直な理解度です。</li>
+      </ul>
+    </div>
+
+    <div class="item" id="q5">
+      <h3><span class="qnum">Q5</span>Git・GitHub が不安（操作の意味が分からない・全容が掴めない）</h3>
+      <p>今回いちばん多かった不安です（7名以上）。3つに分けて答えます。</p>
+      <p><b>① まず全体像だけ掴む。</b>世界は2つしかありません——<b>手元（ローカルリポジトリ）と GitHub（リモートリポジトリ）</b>。<code>clone</code>／<code>pull</code> は「GitHub→手元」、<code>push</code> は「手元→GitHub」、ブランチは「手元での作業の枝分かれ」、プルリクエストは「枝分かれを合流させる依頼」。個々のコマンドで迷子になったら、いま自分がこの図のどこにいるかだけ確認してください。</p>
+      <p><b>② 復習は教材で。</b><a href="../textbook/lecture4.html">Lecture 4（GitHub — fork / clone / push）</a>と<a href="../textbook/lecture6.html">Lecture 6（チーム開発 Git — ブランチ・プルリクエスト）</a>に、操作画面つきで一連の流れが載っています。</p>
+      <p><b>③ 壊すのを恐れない。</b>「正直言われた通りにやっているだけ」で大丈夫な段階です。自信は試行回数からしか生まれないので、自分のリポジトリでなら何度失敗しても問題ありません。間違えて先生のリポジトリにプルリクエストを出してしまっても、closeすれば済むだけで何も壊れません（これは誰もが一度は通る道です）。</p>
+    </div>
+
+    <div class="item" id="q6">
+      <h3><span class="qnum">Q6</span>クラスのファイルが増えていくと、どこに何を書いたか分からなくなる</h3>
+      <p>ファイルが増えてきたら、「<b>1ファイル＝1クラス＝登場人物1人</b>」と捉えてください。迷ったときは、「誰（どのクラス）が・何を持っていて（プロパティ）・何ができるか（メソッド）」の一覧表を紙に書き出すのがおすすめです。この表が自分で書けるなら、コードがどれだけ増えても迷子になりません。教材には各回の完成コードがファイルごとに載っているので、見取り図としても使えます。</p>
+    </div>
+
+    <div class="item" id="q7">
+      <h3><span class="qnum">Q7</span>継承の書き方（maxHp などが入ってくるあたり）が、答えを見ても理解しきれない</h3>
+      <p>一気に全部理解しようとしなくて大丈夫です。解答コードは<b>1行ずつ分解して読む</b>のがコツです。たとえば <code>Enemy</code> クラスなら、①<code>extends Character</code>（親の性質を引き継ぐ）→ ②<code>constructor</code> で <code>super(name, hp)</code>（親の初期化を呼ぶ）→ ③そのあとに自分だけのプロパティ（<code>maxHp</code>）を足す——という3段階で、それぞれ別のことをしています。</p>
+      <p>順番としては「写経（見ながら書く）→ そらで書く」の2周がおすすめです。分解してもなお引っかかる行があれば、「この行が分からない」とアンケートで聞いてください。その粒度の質問がいちばん答えやすいです。復習は<a href="../textbook/lecture5.html">Lecture 5（継承・抽象クラス）</a>へ。</p>
+    </div>
+
+    <div class="item" id="q8">
+      <h3><span class="qnum">Q8</span>main.ts が全体として何をしているのか分からない</h3>
+      <p><code>main.ts</code> は<b>プログラムの入口（司令塔）</b>です。クラスのファイル（<code>character.ts</code> など）は「設計図の置き場」で、それだけでは何も起きません。<code>main.ts</code> が設計図を <code>import</code> して、<code>new</code> でインスタンス（実物）を作り、メソッドを呼んで動かします。実行したときに上から順に流れるのは <code>main.ts</code> だけ——「動きを追いたければ main.ts を上から読む」と覚えてください。</p>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <div class="note">
+    <p>回答内容は個人が特定できない形でまとめています。</p>
+    <p>今回のような質問・不安の共有はとてもありがたいです。今後もアンケートで遠慮なく聞いてください。</p>
+  </div>
+</footer>
+
+</body>
+</html>
