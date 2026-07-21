@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第8回 アンケート回答 — TypeScript 講座</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .masthead .meta{margin-top:18px;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono);}
+  .masthead .meta a{color:var(--accent-ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:8px 12px;border-radius:8px;font-size:.94rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+
+  .item{border-top:1px solid var(--line);padding-top:22px;margin-top:22px;}
+  .item:first-of-type{border-top:0;margin-top:0;padding-top:4px;}
+  .item h3{font-size:1.08rem;font-weight:700;margin:0 0 10px;line-height:1.55;}
+  .item h3 .qnum{font-family:var(--mono);font-size:.88rem;color:var(--accent);margin-right:.7em;}
+  .item p{margin:0 0 14px;}
+  .item p:last-child{margin-bottom:0;}
+  .item ul{margin:0 0 14px;padding-left:1.3em;}
+  .item li{margin:.3em 0;}
+
+  figure.code{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.85rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0 14px;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 24px 64px;color:var(--ink-faint);font-size:.82rem;line-height:1.7;}
+  footer .note{padding:14px 16px;background:var(--bg-sunk);border-radius:10px;}
+  footer p{margin:0 0 .3em;}
+
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 8</p>
+    <h1>第8回「例外処理」アンケートへの回答</h1>
+    <p>第8回「例外処理」のアンケートへのご回答ありがとうございました。いただいた質問への回答と、共通していた声へのコメントをまとめます。質問とつまずきどころは、これまでどおり匿名でこのページに共有していきます。</p>
+    <p class="meta">回答 8名 ／ 学習時間 〜1h×4・〜2h×4<br>← <a href="../textbook/">教材目次</a> ／ 教材本編：<a href="../textbook/lecture8.html">Lecture 8 — 例外処理</a></p>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#voices"><span class="n">§</span><span>「まだスラスラ書けない」は順調です</span><span class="d">共通の声</span></a></li>
+    <li><a href="#q1"><span class="n">Q1</span><span>Error クラスは定義していないのに、どこから出てきた？</span><span class="d">概念</span></a></li>
+    <li><a href="#q2"><span class="n">Q2</span><span>try-catch と throw new Error は、それぞれどういう役割？</span><span class="d">概念</span></a></li>
+    <li><a href="#q3"><span class="n">Q3</span><span>エラーを「予測」しながら書くのは慣れ？</span><span class="d">実践</span></a></li>
+    <li><a href="#q4"><span class="n">Q4</span><span>catch と finally は必ずセットで書く必要がある？</span><span class="d">構文</span></a></li>
+    <li><a href="#q5"><span class="n">Q5</span><span>「ざっくりこんな感じかな」の理解で、一旦大丈夫？</span><span class="d">学習法</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- 共通の声 -->
+  <article class="chapter" id="voices">
+    <span class="chapter__tag">共通の声</span>
+    <h2>「まだスラスラ書けない」は順調です</h2>
+    <p class="chapter__lead">今回は「詰まった」よりも、「調べながらなら書ける」「形が覚えられない」「書く順番が身についていない」という声が中心でした。まとめてコメントします。</p>
+
+    <div class="item">
+      <h3>調べながら書いている——それが正しい書き方です</h3>
+      <p>「スラスラ書くことはできないけど、調べながら落とし込んでいる」という声がありました。<b>それは現役のエンジニアの書き方そのもの</b>です。構文を暗記してから書く人はいなくて、みんな調べながら・補完に助けられながら書いています。調べて手元のコードに落とし込めているなら、今回の内容はもう「使えて」います。</p>
+      <p>「カスタムエラーの定番形（<code>constructor</code> ＋ <code>super(message)</code> ＋ <code>this.name</code>）は何度か書かないと覚えられなそう」という声も、その通りで大丈夫です。これは<b>書いた回数で手に馴染むタイプの構文</b>なので、当面は<a href="../textbook/lecture8.html#c8c">教材 8-c</a> の丸写しから始めてください。</p>
+    </div>
+
+    <div class="item">
+      <h3>覚えるのは「形」より「使いどころ」</h3>
+      <p>細かい書き方は教材を見ればいいので、頭に残すのは次の3つだけで十分です。</p>
+      <ul>
+        <li>落ちるかもしれない処理は <code>try</code> で囲んで <code>catch</code> で受け止める（<a href="../textbook/lecture8.html#c8a">8-a</a>）</li>
+        <li>失敗が確定したら <code>throw</code> で早めに脱出する——ガード節（<a href="../textbook/lecture8.html#c8b">8-b</a>・<a href="../textbook/lecture8.html#c8d">8-d</a>）</li>
+        <li>エラーの種類を見分けたくなったら、カスタムエラー ＋ <code>instanceof</code>（<a href="../textbook/lecture8.html#c8c">8-c</a>）</li>
+      </ul>
+      <p>「処理のフローはイメージできるようになってきた」という声がありましたが、まさにその<b>フローのイメージこそが今回持ち帰ってほしいもの</b>です。書く順番は、イメージがあれば後から必ずついてきます。</p>
+    </div>
+
+    <div class="item">
+      <h3>復習のしかたについて</h3>
+      <p>講義の内容を自分の言葉でノートにまとめ直して送ってくれた方がいました。<b>自分の言葉に置き換えて書き出すのは、最も効果の高い復習方法のひとつ</b>です。内容もほぼ正確でした（細かい確認は下の Q1 で）。</p>
+      <p>また「他の方の Q&amp;A が見られると、気づかなかった視点があってありがたい」という声もいただいたので、この共有形式は今後も続けていきます。</p>
+    </div>
+  </article>
+
+  <!-- Q&A -->
+  <article class="chapter">
+    <span class="chapter__tag">Q &amp; A</span>
+    <h2>いただいた質問への回答</h2>
+    <p class="chapter__lead">アンケートでいただいた質問に、まとめて回答します。</p>
+
+    <div class="item" id="q1">
+      <h3><span class="qnum">Q1</span>Error クラスは定義していないのに、いきなり出てきて戸惑った</h3>
+      <p>複数の方から同じ質問がありました。「<code>Error</code> というクラスは標準装備されているクラスという理解であっていますか？」——<b>その理解で正解です</b>。<code>Error</code> は JavaScript が言語として最初から用意しているクラスで、自分で定義したり import したりしなくても使えます。実はこれまでも同じ「標準装備」をいくつも使ってきました。</p>
+      <figure class="code"><figcaption><span class="file">定義していないのに使えるもの＝標準装備</span></figcaption><div class="code-scroll"><pre>console.<span class="f">log</span>(<span class="s">&quot;...&quot;</span>);   <span class="c">// console クラスを書いた覚えはない</span>
+JSON.<span class="f">parse</span>(<span class="s">&quot;...&quot;</span>);   <span class="c">// JSON も書いていない</span>
+<span class="k">new</span> <span class="f">Error</span>(<span class="s">&quot;...&quot;</span>);    <span class="c">// Error も同じ「標準装備」のクラス</span></pre></div></figure>
+      <p>「例外がクラスで表されるのがしっくりこない。今まで習っていたクラスが大枠で、『エラーを表現するための設計図』を例外クラスと呼んでいるイメージであっていますか？」——<b>このイメージも正確です</b>。クラス＝設計図という理解はそのままでよくて、<code>Error</code> は「エラーという出来事」を表現するための設計図です。<code>new Error(&quot;メッセージ&quot;)</code> は、その設計図から「今回起きたエラー1件分」の実体（インスタンス）を作っています。メッセージや種類の情報をひとつの荷物に詰めて、<code>throw</code> で投げて <code>catch</code> まで運ぶ——そのための入れ物と考えてください。</p>
+      <p>そして<a href="../textbook/lecture8.html#c8c">カスタムエラー（8-c）</a>は、この標準の <code>Error</code> を <code>extends</code> した子クラスです。<code>Character</code> を継承して <code>Warrior</code> や <code>Priest</code> という種類を作ったのと、まったく同じ構図です。</p>
+    </div>
+
+    <div class="item" id="q2">
+      <h3><span class="qnum">Q2</span>try-catch と throw new Error は、それぞれどういう役割？</h3>
+      <p>「<code>throw new Error</code> は自分でも想定されるエラーを先出ししておくイメージ？」——かなり良い線です。整理すると、この2つは<b>「投げる側」と「受け止める側」のペア</b>です。<code>attack</code> する側がいれば <code>takeDamage</code> される側がいる、という前回の話と同じ構図です。</p>
+      <ul>
+        <li><b><code>throw</code> ＝ 投げる側</b>：処理の奥で「これは失敗が確定した」と分かった瞬間に、エラーを報告して脱出する（<code>divide</code> の 0 割り、<code>registerUser</code> の空文字チェック）</li>
+        <li><b><code>try-catch</code> ＝ 受け止める側</b>：報告されたエラーを受け止めて、「ユーザーにどう伝えるか」「次にどうするか」を決める</li>
+      </ul>
+      <p>「<code>try-catch</code> だけだと何がエラーか分からないから、それを伝えるために <code>throw new Error</code> が必要？」——ここだけ少し修正させてください。<code>try-catch</code> は、自分が <code>throw</code> を書かなくても働きます。<a href="../textbook/lecture8.html#c8a">8-a</a> で <code>JSON.parse</code> の例外を受け止めたとき、<code>throw</code> は一行も書いていませんでした。あれは <code>JSON.parse</code> が<b>内部で <code>throw</code> してくれていた</b>のです。つまり <code>throw</code> は「標準の関数やライブラリが中でやっていることを、自分のロジックでもやる」ための道具です。</p>
+      <p>そして「何のエラーかを伝える」役割を担うのは、<code>throw</code> そのものではなく<a href="../textbook/lecture8.html#c8c">カスタムエラー（8-c）</a>です。<a href="../textbook/lecture8.html#c8d">8-d</a> の実例がこの全部の組み合わせで、奥のロジック（<code>registerUser</code>）が <code>ValidationError</code> を <code>throw</code> し、画面に近い側（<code>onSubmit</code>）が <code>catch</code> して <code>instanceof</code> で見分けています。</p>
+    </div>
+
+    <div class="item" id="q3">
+      <h3><span class="qnum">Q3</span>「こうなるだろう」とエラーを予測しながら書くのは慣れ？ 実際どんなエラーが想定される？</h3>
+      <p>半分は慣れですが、もう半分は<b>定石</b>です。エラーをゼロから予知する必要はなくて、例外が起きやすい場所は実は決まっています。</p>
+      <ul>
+        <li><b>外から入ってくるデータ</b>：ユーザーの入力（空文字・数値じゃない文字列）、<code>JSON.parse</code> に渡す文字列、ファイルや通信で受け取るデータ</li>
+        <li><b>計算の特殊ケース</b>：0 で割る、マイナスや範囲外の値</li>
+      </ul>
+      <p>定石をひとことで言うと「<b>外から来るものは信用しない</b>」です。境界（入力を受け取る場所）にガード節を置く、と覚えておけば、予知能力は要りません。</p>
+      <p>「いま学習しているコードで実際どんなエラーが想定されるのか、考えても分からなかった」という声もありましたが、これは<b>正しい観察</b>です。いま書いている戦闘シミュレーションは、入力が全部自分のコードの中で決まっているので、例外処理の出番がほとんどありません。例外処理が本領を発揮するのは、画面入力・通信・ファイルといった「外部」とつながってからです。今の段階では「そういう備え方がある」と知っていれば十分です。</p>
+    </div>
+
+    <div class="item" id="q4">
+      <h3><span class="qnum">Q4</span>try を書くとき、catch と finally は必ずセットで書く必要がある？</h3>
+      <p>セットである必要はありません。ルールは「<b><code>try</code> 単独は書けない。<code>catch</code> か <code>finally</code> の少なくともどちらか1つが必要</b>」です。組み合わせは3パターンあります。</p>
+      <figure class="code"><figcaption><span class="file">3つの組み合わせ</span></figcaption><div class="code-scroll"><pre><span class="k">try</span> { ... } <span class="k">catch</span> (error) { ... }                     <span class="c">// いちばんよく使う形</span>
+<span class="k">try</span> { ... } <span class="k">finally</span> { ... }                           <span class="c">// 受け止めず、後片付けだけする</span>
+<span class="k">try</span> { ... } <span class="k">catch</span> (error) { ... } <span class="k">finally</span> { ... }   <span class="c">// 両方</span></pre></div></figure>
+      <p><code>finally</code> は「成功しても失敗しても必ずやりたい後片付け」があるときだけ足せば十分で、普段の第一候補は <code>try-catch</code> だけの形です。</p>
+    </div>
+
+    <div class="item" id="q5">
+      <h3><span class="qnum">Q5</span>頭の中で「ざっくりこんな感じかな？」という理解のままで、一旦大丈夫？</h3>
+      <p><b>一旦それで大丈夫です。</b>今回の到達目標は、次の3つのイメージが持てていることです。</p>
+      <ul>
+        <li>例外が起きると、プログラムはその場で止まってしまう</li>
+        <li>落ちそうな処理は <code>try-catch</code> で受け止められる</li>
+        <li>失敗が確定したら <code>throw</code> で早めに脱出できる</li>
+      </ul>
+      <p>例外処理は「実際に必要になる場面で使って身につく」タイプの内容なので、いま完璧に書ける必要はありません。練習問題で「ほぼ詰まった」という声もありましたが、どこで詰まったかを次のアンケートや授業でそのまま教えてもらえれば、個別にフォローしてこのページでも解説します。</p>
+      <div class="point"><span class="label">補足</span><div>細かい構文を思い出したくなったら、<a href="../textbook/lecture8.html">教材本編</a>をリファレンスとして使ってください。掲載コードはすべて動画内の実物です。</div></div>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <div class="note">
+    <p>回答内容は個人が特定できない形でまとめています。</p>
+    <p>解決しなかった疑問やエラーは、次回の授業・アンケートで遠慮なく聞いてください。</p>
+  </div>
+</footer>
+
+</body>
+</html>
