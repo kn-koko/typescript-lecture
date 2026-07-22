@@ -1,15 +1,12 @@
-const now = new Date();
+// RegExp (Regular Expression): 正規表現
 
-console.log(now.toISOString());
-console.log(now.toLocaleString("ja-JP"));
+// hello, Hello, hElLo, ...
+const pattern = /hello/i;
 
-console.log(now.getFullYear());
-console.log(now.getMonth() + 1);
-console.log(now.getDate()); // 23
+console.log(pattern.test("Hello, world"));
+console.log(pattern.test("goodbye"));
 
-const futureDate = new Date();
-console.log(futureDate.toLocaleString("ja-JP"));
-futureDate.setDate(now.getDate() + 7);
-console.log(futureDate.toLocaleString("ja-JP"));
-futureDate.setMonth(3);
-console.log(futureDate.toLocaleString("ja-JP"));
+const text = "Typescript is great!";
+const replacedText = text.replace(/typescript/i, "JavaScript");
+
+console.log(replacedText);
