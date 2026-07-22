@@ -1,19 +1,13 @@
-// Map: キーと値のセット (key-value)
-// この場合、key は string, value は number になる
-const userAges = new Map<string, number>();
+const uniqueNumbers = new Set<number>();
 
-userAges.set("Alice", 25); // Alice -> 25
-userAges.set("Bob", 18); // Bob -> 18
+uniqueNumbers.add(1);
+uniqueNumbers.add(2);
+uniqueNumbers.add(3);
 
-console.log(userAges.get("Alice"));
-console.log(userAges.has("Bob"));
+console.log(uniqueNumbers);
+console.log(uniqueNumbers.has(1));
+console.log(uniqueNumbers.size);
 
-// userAges.delete("Bob");
-
-// console.log(userAges.has("Bob"));
-
-for (const [name, age] of userAges) {
-  // [Alice, 25]
-  // [Bob, 18]
-  console.log(`${name} (${age})`);
+for (const num of uniqueNumbers) {
+  console.log(num);
 }
