@@ -12,19 +12,21 @@ KEYWORDS = {'export','default','class','constructor','this','return','private','
     'protected','readonly','new','const','let','var','type','function','if','else','for',
     'while','import','from','extends','implements','abstract','override','super','interface',
     'typeof','as','void','true','false','null','undefined','get','set',
-    'try','catch','finally','throw','instanceof'}
+    'try','catch','finally','throw','instanceof','of'}
 TYPES = {'string','number','boolean','void','any','unknown','never','object'}
 
-tok = re.compile(r'(//[^\n]*)|(`(?:[^`\\]|\\.)*`)|("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_$]*)|(\s+)|([^\sA-Za-z0-9_$])', re.S)
+# 正規表現リテラル: 直後が空白でない `/` で始まり同一行内で閉じるもの（`a / b` の除算は空白で弾く）
+tok = re.compile(r'(//[^\n]*)|(`(?:[^`\\]|\\.)*`)|("(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')|(/(?:\\.|[^/\\\n ])(?:\\.|[^/\\\n])*/[a-z]*)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_$]*)|(\s+)|([^\sA-Za-z0-9_$])', re.S)
 
 def hl(code):
     code = code.rstrip('\n')
     parts = []
     for m in tok.finditer(code):
-        cm, tmpl, st, num, word, ws, other = m.groups()
+        cm, tmpl, st, rex, num, word, ws, other = m.groups()
         if cm is not None: parts.append(f'<span class="c">{html.escape(cm)}</span>')
         elif tmpl is not None: parts.append(f'<span class="s">{html.escape(tmpl)}</span>')
         elif st is not None: parts.append(f'<span class="s">{html.escape(st)}</span>')
+        elif rex is not None: parts.append(f'<span class="s">{html.escape(rex)}</span>')
         elif num is not None: parts.append(f'<span class="n">{num}</span>')
         elif word is not None:
             if word in KEYWORDS: parts.append(f'<span class="k">{word}</span>')

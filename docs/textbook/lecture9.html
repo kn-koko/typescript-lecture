@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 9. 組み込みAPI</title>
+
+<style>
+  :root {
+    --bg:#fbfaf8; --bg-sunk:#f1efe9; --surface:#ffffff; --ink:#1a1f2b; --ink-soft:#4c5566;
+    --ink-faint:#8891a1; --line:#e4e1d9; --line-strong:#d3cfc4; --accent:#2f6fb3; --accent-ink:#1f4e82;
+    --code-bg:#f6f8fb; --tag-bg:#e8eef6; --step-bg:#eef3f9;
+    --c-k:#a3306e; --c-t:#1f7a8c; --c-f:#2f6fb3; --c-s:#1f7a4d; --c-n:#a35a12; --c-c:#8891a1;
+    --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans:  system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --maxw: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#10141c; --bg-sunk:#0b0e15; --surface:#161b25; --ink:#e6e9ef; --ink-soft:#a7b0c0;
+      --ink-faint:#6b7688; --line:#262d3a; --line-strong:#333c4c; --accent:#6aa6e0; --accent-ink:#8cbdec;
+      --code-bg:#0e131c; --tag-bg:#1c2532; --step-bg:#151d29;
+      --c-k:#e08cba; --c-t:#6fd3d3; --c-f:#7fb2ec; --c-s:#7fd3a0; --c-n:#e0b070; --c-c:#6b7688;
+    }
+  }
+  :root[data-theme="light"]{--bg:#fbfaf8;--bg-sunk:#f1efe9;--surface:#fff;--ink:#1a1f2b;--ink-soft:#4c5566;--ink-faint:#8891a1;--line:#e4e1d9;--line-strong:#d3cfc4;--accent:#2f6fb3;--accent-ink:#1f4e82;--code-bg:#f6f8fb;--tag-bg:#e8eef6;--step-bg:#eef3f9;--c-k:#a3306e;--c-t:#1f7a8c;--c-f:#2f6fb3;--c-s:#1f7a4d;--c-n:#a35a12;--c-c:#8891a1;}
+  :root[data-theme="dark"]{--bg:#10141c;--bg-sunk:#0b0e15;--surface:#161b25;--ink:#e6e9ef;--ink-soft:#a7b0c0;--ink-faint:#6b7688;--line:#262d3a;--line-strong:#333c4c;--accent:#6aa6e0;--accent-ink:#8cbdec;--code-bg:#0e131c;--tag-bg:#1c2532;--step-bg:#151d29;--c-k:#e08cba;--c-t:#6fd3d3;--c-f:#7fb2ec;--c-s:#7fd3a0;--c-n:#e0b070;--c-c:#6b7688;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-ink);}
+
+  .masthead{border-bottom:1px solid var(--line);background:var(--surface);}
+  .masthead__inner{max-width:var(--maxw);margin:0 auto;padding:44px 24px 34px;}
+  .kicker{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 12px;}
+  .masthead h1{font-size:2rem;font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:.96rem;max-width:60ch;}
+  .proto-note{margin-top:20px;padding:11px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--bg-sunk);font-size:.8rem;color:var(--ink-soft);}
+  .proto-note b{color:var(--ink);}
+
+  nav.toc{max-width:var(--maxw);margin:0 auto;padding:26px 24px 6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:8px;font-size:.96rem;}
+  nav.toc a:hover{background:var(--bg-sunk);}
+  nav.toc a .n{font-family:var(--mono);font-size:.82rem;color:var(--accent);flex:none;width:2.4em;}
+  nav.toc a .d{color:var(--ink-faint);font-size:.84rem;margin-left:auto;flex:none;}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 100px;}
+  .chapter{padding-top:26px;margin-top:26px;border-top:2px solid var(--line-strong);}
+  .chapter:first-of-type{border-top:0;}
+  .chapter__tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--accent-ink);background:var(--tag-bg);padding:3px 10px;border-radius:999px;margin-bottom:12px;}
+  .chapter h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;line-height:1.3;text-wrap:balance;}
+  .chapter__lead{color:var(--ink-soft);font-size:.94rem;margin:0 0 22px;}
+  h3{font-size:1.05rem;font-weight:700;margin:22px 0 12px;}
+
+  .narration{font-family:var(--serif);font-size:1.05rem;line-height:1.9;margin:0 0 20px;padding-left:18px;border-left:3px solid var(--line-strong);}
+  .narration p{margin:0 0 1em;}.narration p:last-child{margin-bottom:0;}
+  .narration em{font-style:normal;color:var(--accent-ink);font-weight:600;font-family:var(--sans);font-size:.94em;}
+
+  figure.code{margin:0 0 20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code-bg);}
+  figure.code figcaption{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft);padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
+  figure.code figcaption .file{color:var(--ink);}
+  .code-scroll{overflow-x:auto;}
+  pre{margin:0;padding:15px 16px;font-family:var(--mono);font-size:.85rem;line-height:1.7;tab-size:2;color:var(--ink);white-space:pre;}
+  .k{color:var(--c-k);}.t{color:var(--c-t);}.f{color:var(--c-f);}.s{color:var(--c-s);}.n{color:var(--c-n);}.c{color:var(--c-c);font-style:italic;}
+  code{font-family:var(--mono);font-size:.85em;background:var(--tag-bg);padding:1px 6px;border-radius:4px;}
+
+  .point{display:flex;gap:12px;padding:15px 17px;background:var(--bg-sunk);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;font-size:.93rem;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+  .point .label{flex:none;font-weight:700;color:var(--accent-ink);font-size:.8rem;}
+  .point ul{margin:.2em 0 0;padding-left:1.1em;}.point li{margin:.3em 0;}
+  @media(max-width:560px){.masthead h1{font-size:1.55rem;}.chapter h2{font-size:1.3rem;}pre{font-size:.78rem;}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead__inner">
+    <p class="kicker">TypeScript 講座 · Lecture 9</p>
+    <h1>組み込みAPI — 最初から用意されているクラスたち</h1>
+    <p>TypeScript には、よく使う処理や便利なデータの持ち方が<em>最初から組み込まれた</em>クラスとして用意されている。今回はその中から <code>Map</code>・<code>Set</code>・<code>Date</code>・<code>RegExp</code> の4つ。それぞれ独立した道具なので、1つずつ見ていく。</p>
+    <div class="proto-note">
+      この回は動画 9-a〜9-d と <code>src/main.ts</code> の4コミット（<code>ebe68b8</code> / <code>6f49bab</code> / <code>b0bb9ce</code> / <code>c4b17a0</code>）から作成。掲載コードは<b>すべて各コミットの実物</b>です。この回も毎回 <code>main.ts</code> を丸ごと書き換えながら進む「使い捨ての例」中心のため、Lecture 8 までのコードはリセットされます。9-b の「重複 add」、9-c の <code>setMonth(1)</code>、9-d の「文字列版 replace」は動画内の実演（<b>未コミット</b>）で、本文中でそのように断っています。
+    </div>
+</div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#c9a"><span class="n">9-a</span><span>Map — キーと値のペア</span><span class="d">対応表</span></a></li>
+    <li><a href="#c9b"><span class="n">9-b</span><span>Set — 重複を許さない配列</span><span class="d">重複排除</span></a></li>
+    <li><a href="#c9c"><span class="n">9-c</span><span>Date — 日付と時刻</span><span class="d">日時</span></a></li>
+    <li><a href="#c9d"><span class="n">9-d</span><span>RegExp — 正規表現</span><span class="d">パターン</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+  <!-- 9-a -->
+  <article class="chapter" id="c9a">
+    <span class="chapter__tag">Chapter 9-a</span>
+    <h2>Map — キーと値のペア</h2>
+    <p class="chapter__lead">オブジェクトと似ているが、キーを「後から・動的に」決められるのが違い。</p>
+    <blockquote class="narration">
+      <p>まず「<em>組み込みAPI</em>」とは何か。TypeScript に<em>最初から用意されている（組み込まれている）クラス</em>のことです。よく使う処理や「こういうデータの持ち方をしたら便利ですよね」というものがあらかじめ用意されていて、これをうまく使ってコードを書いてくださいね、というのが組み込みAPIです。必ず使わないといけないものではありませんが、知っておくと<em>より良いコードが書けます</em>。今回は Map・Set・Date・RegExp の4つ。この4つは繋がっているわけではなく全然別のことをやるものなので、1個1個独立したものとして受け取ってください。</p>
+      <p>1つ目の <em>Map</em> はクラスなので、<code>new Map()</code> という形でインスタンスとして宣言します。後ろの <code>&lt;string, number&gt;</code> は「<em>キーが string、値が number</em> のペアを格納します」という宣言です。ここでは <code>userAges</code>——ユーザーの年齢を格納する Map で、「Alice は 25 ですよ」「Bob は 18 ですよ」という対応を入れていきます。イメージとしては <code>{ Alice: 25, Bob: 18 }</code> というオブジェクトを持っている感じです。</p>
+      <p>ではオブジェクトと何が違うのか。オブジェクトのキー（<code>name</code> や <code>age</code> のような）は<em>コードにベタ書きされた値</em>で、あらかじめ決めておかないといけません。でも「Alice」「Bob」のような<em>名前</em>をキーにしたい場合、どういう値が来るか予想できないので、最初にコードに書いておくのが難しい。そういうときに使えるのが Map です。Map は「キーは string、値は number」ということしか決まっていないので、<em>実際の対応関係は後から入れられる</em>わけです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="c">// Map: キーと値のセット (key-value)</span>
+<span class="c">// この場合、key は string, value は number になる</span>
+<span class="k">const</span> userAges = <span class="k">new</span> Map&lt;<span class="t">string</span>, <span class="t">number</span>&gt;();
+
+userAges.<span class="k">set</span>(<span class="s">&quot;Alice&quot;</span>, <span class="n">25</span>); <span class="c">// Alice -&gt; 25</span>
+userAges.<span class="k">set</span>(<span class="s">&quot;Bob&quot;</span>, <span class="n">18</span>); <span class="c">// Bob -&gt; 18</span>
+
+console.<span class="f">log</span>(userAges.<span class="k">get</span>(<span class="s">&quot;Alice&quot;</span>));
+console.<span class="f">log</span>(userAges.<span class="f">has</span>(<span class="s">&quot;Bob&quot;</span>));
+
+<span class="c">// userAges.delete(&quot;Bob&quot;);</span>
+
+<span class="c">// console.log(userAges.has(&quot;Bob&quot;));</span>
+
+<span class="k">for</span> (<span class="k">const</span> [name, age] <span class="k">of</span> userAges) {
+  <span class="c">// [Alice, 25]</span>
+  <span class="c">// [Bob, 18]</span>
+  console.<span class="f">log</span>(<span class="s">`${name} (${age})`</span>);
+}</pre></div></figure>
+    <blockquote class="narration">
+      <p>値を入れるときは <em>set</em>、取ってくるときは <em>get</em> でキーを指定します。<em>has</em> は「このキーはありますか？」の確認で、<code>has("Bob")</code> は true、存在しない <code>"Charlie"</code> なら false。<em>delete</em> でキーごと消すこともできます（動画では <code>delete("Bob")</code> で has が false になるのを確認してから、次のループに Bob を残すためコメントアウトしています）。</p>
+      <p>Map は複数のペアを持てるので、<em>for 文でループを回せます</em>。ただし書き方がちょっと特殊です。<code>for (const [name, age] of userAges)</code>——この大括弧で、<em>キーと値をそれぞれの変数に拾ってくる</em>ことができます。イメージとしては、1周目は <code>[Alice, 25]</code>、2周目は <code>[Bob, 18]</code> が配列みたいな形で返ってきて、先頭を <code>name</code>、後ろを <code>age</code> に入れる、という感じです。この書き方は特殊なので覚えておいてください。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">出力</span></figcaption><div class="code-scroll"><pre>25
+true
+Alice (25)
+Bob (18)</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li>組み込みAPI＝<b>最初から用意されているクラス</b>。<code>new</code> して使うのは自分で作ったクラスと同じ。</li>
+        <li>Map は<b>キーと値のペア</b>を複数格納する。<code>set</code> / <code>get</code> / <code>has</code> / <code>delete</code>。</li>
+        <li>オブジェクトと違い、キーを<b>プログラムの中にベタ書きせず動的に指定できる</b>のが便利。</li>
+        <li>ループは <code>for (const [name, age] of map)</code> の形（キーと値を同時に受け取る特殊な書き方）。</li>
+      </ul>
+    </div></div>
+  </article>
+
+  <!-- 9-b -->
+  <article class="chapter" id="c9b">
+    <span class="chapter__tag">Chapter 9-b</span>
+    <h2>Set — 重複を許さない配列</h2>
+    <p class="chapter__lead">同じ値をもう一度入れても、何も起こらない。それが特徴であり武器。</p>
+    <blockquote class="narration">
+      <p>2つ目の <em>Set</em> は、一言で言うと「<em>重複を許さない配列</em>」です。<code>new Set&lt;number&gt;()</code> で「number 型の要素が入る集合」を宣言し、<em>add</em> というメソッドで値を追加していきます。1、2、3 と追加すると、どんどん後ろに要素が足されていって——このへんは配列っぽいですね。</p>
+      <p>では配列と何が違うのか。<em>同じ値をもう一度 add しても、何も起こらない</em>んです。もう一度 <code>add(2)</code> しても「1, 2, 3, 2」とはならず「1, 2, 3」のまま。つまり Set で表されているデータの集合は、<em>中身が絶対に重複していないことが保証されている</em>わけです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">重複して追加してみると</span><span>参考・動画内の実演（未コミット）</span></figcaption><div class="code-scroll"><pre>uniqueNumbers.<span class="f">add</span>(<span class="n">2</span>); <span class="c">// もう一度 2 を追加しても……</span>
+console.<span class="f">log</span>(uniqueNumbers); <span class="c">// Set(3) { 1, 2, 3 } ← 変化しない</span></pre></div></figure>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> uniqueNumbers = <span class="k">new</span> Set&lt;<span class="t">number</span>&gt;();
+
+uniqueNumbers.<span class="f">add</span>(<span class="n">1</span>);
+uniqueNumbers.<span class="f">add</span>(<span class="n">2</span>);
+uniqueNumbers.<span class="f">add</span>(<span class="n">3</span>);
+
+console.<span class="f">log</span>(uniqueNumbers);
+console.<span class="f">log</span>(uniqueNumbers.<span class="f">has</span>(<span class="n">1</span>));
+console.<span class="f">log</span>(uniqueNumbers.size);
+
+<span class="k">for</span> (<span class="k">const</span> num <span class="k">of</span> uniqueNumbers) {
+  console.<span class="f">log</span>(num);
+}</pre></div></figure>
+    <blockquote class="narration">
+      <p>Map と同じく <em>has</em> で「この値はありますか？」を確認できます。もう1つ、<em>size</em> というプロパティで<em>中に何個入っているか</em>が分かります（<code>length</code> みたいなイメージです）。</p>
+      <p>この size が効いてくる使いどころを1つ。たとえば施設の「今月の予約者名簿」がバーッとあって、同じ人が何回も予約しているかもしれない中で「<em>結局、何人が予約したの？</em>」を知りたいとします。配列を1個1個回して重複チェックすると結構大変ですが、<em>配列を全部 Set にぶち込んでしまえば</em>、TypeScript 側が勝手に重複を排除してくれる。あとは size を見るだけで人数が分かります。頭をひねってうまく使うと処理がかなり簡単に書けて、ループを消せたりもするので、覚えておくと役に立ちます。私は結構 Set が好きです。</p>
+      <p>ループは Map と違って特殊な書き方は必要なく、<em>配列と全く同じ</em>素直な形で回せます。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">出力</span></figcaption><div class="code-scroll"><pre>Set(3) { 1, 2, 3 }
+true
+3
+1
+2
+3</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li>Set は<b>重複を許さない集合</b>。同じ値を <code>add</code> しても何も起こらない。</li>
+        <li><code>has</code> で存在確認、<code>size</code>（プロパティ）で個数。</li>
+        <li>「配列を Set にぶち込む」だけで重複排除が終わる——<b>重複を数えたい・除きたいときの第一候補</b>。</li>
+      </ul>
+    </div></div>
+  </article>
+
+  <!-- 9-c -->
+  <article class="chapter" id="c9c">
+    <span class="chapter__tag">Chapter 9-c</span>
+    <h2>Date — 日付と時刻</h2>
+    <p class="chapter__lead">現在時刻の取得と日付の計算。ただし「タイムゾーン」に癖がある。</p>
+    <blockquote class="narration">
+      <p>3つ目の <em>Date</em> は、読んで字のごとく<em>日付や時刻を表すインスタンス</em>です。<code>new Date()</code> と書くと、<em>現在時刻</em>のインスタンスが作られます。中身を確認するには <code>toISOString()</code> を使います。ISO 形式というのは、日付や時刻の表記が国によってバラバラなので、<em>統一された形式</em>として決められているものです。</p>
+      <p>ここで出力を見ると——<em>時刻が9時間ずれています</em>。収録時は7月23日の0時14分でしたが、出力は「7月22日の15時14分」。実は <code>new Date()</code> で作られたインスタンスは、<em>世界標準時（UTC）</em>を基準にした値を持っていて、<code>toISOString()</code> はその UTC の時刻を出します。日本は9時間の時差があるので、日本から見ると9時間巻き戻った時刻が出てくるわけです。</p>
+      <p>プログラムの中で時刻を扱うときは、基本的に<em>世界標準時を基準に考えます</em>。国によって時間そのものがバラバラなので、統一的に扱うにはどこかに基準が必要——じゃあ標準時にしましょう、というわけです。日付の計算は UTC で行い、<em>表示するときにその国の形式に直す</em>。日本時間で出すには <code>toLocaleString("ja-JP")</code> を使います。この「どこの時間で表示するか」を<em>タイムゾーン</em>と言い、ちゃんと指定しないと全然違う時刻が出てしまうので、時刻を扱うアプリケーションを作るときはかなり気を使う必要があります。最終課題でタイマーなどを作る方は、このタイムゾーン問題に注意してください。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="k">const</span> now = <span class="k">new</span> <span class="f">Date</span>();
+
+console.<span class="f">log</span>(now.<span class="f">toISOString</span>());
+console.<span class="f">log</span>(now.<span class="f">toLocaleString</span>(<span class="s">&quot;ja-JP&quot;</span>));
+
+console.<span class="f">log</span>(now.<span class="f">getFullYear</span>());
+console.<span class="f">log</span>(now.<span class="f">getMonth</span>() + <span class="n">1</span>);
+console.<span class="f">log</span>(now.<span class="f">getDate</span>()); <span class="c">// 23</span>
+
+<span class="k">const</span> futureDate = <span class="k">new</span> <span class="f">Date</span>();
+console.<span class="f">log</span>(futureDate.<span class="f">toLocaleString</span>(<span class="s">&quot;ja-JP&quot;</span>));
+futureDate.<span class="f">setDate</span>(now.<span class="f">getDate</span>() + <span class="n">7</span>);
+console.<span class="f">log</span>(futureDate.<span class="f">toLocaleString</span>(<span class="s">&quot;ja-JP&quot;</span>));
+futureDate.<span class="f">setMonth</span>(<span class="n">3</span>);
+console.<span class="f">log</span>(futureDate.<span class="f">toLocaleString</span>(<span class="s">&quot;ja-JP&quot;</span>));</pre></div></figure>
+    <blockquote class="narration">
+      <p>一部だけ取り出すメソッドもあります。年だけなら <code>getFullYear()</code>。月は <code>getMonth()</code> ですが——そのまま出すと「7月なのに 6」と出ます。実は<em>1月が 0</em> で、配列と同じ「最初は0番目」方式なので<em>1個ずれている</em>んです。実際の月が欲しければ <code>+ 1</code> してあげる必要があります。日は <code>getDate()</code> で、こちらは 1 は足さなくてよくて、そのまま 23 と出てくれます。</p>
+      <p>日付の計算もやってみます。<code>setDate(now.getDate() + 7)</code>——今日が23日なので「23 + 7 = 30」を日付にセットする、つまり<em>日付の部分だけを書き換えて</em>1週間後に進める書き方です。時刻や年月はそのままで、日付だけが 30 になります。同じように <code>setMonth()</code> などで月だけを書き換えることもできます（1ずれるのは get と同じで、コードの <code>setMonth(3)</code> は4月です）。ちなみに動画では <code>setMonth(1)</code>＝2月を試したところ、その時点の日付が30日で「<em>2月30日」は存在しないため、自動で3月2日に繰り越される</em>という一幕もありました。存在しない日付は隣の月に押し出されます。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">出力</span><span>収録時（7/23 0:14 JST）</span></figcaption><div class="code-scroll"><pre>2026-07-22T15:14:20.532Z   <span class="c">// UTC。日本時間より9時間前</span>
+2026/7/23 0:14:20          <span class="c">// toLocaleString("ja-JP")</span>
+2026
+7
+23
+2026/7/23 0:14:20          <span class="c">// futureDate（この時点では now と同じ）</span>
+2026/7/30 0:14:20          <span class="c">// setDate で1週間後に</span>
+2026/4/30 0:14:20          <span class="c">// setMonth(3) → 4月</span></pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li><code>new Date()</code> は現在時刻。中身は <b>UTC（世界標準時）基準</b>——<code>toISOString()</code> は日本時間より9時間前に見える。</li>
+        <li><b>内部の処理は UTC、表示は <code>toLocaleString("ja-JP")</code></b> が定石。タイムゾーンの指定を忘れると全然違う時刻が出る。</li>
+        <li><code>getMonth()</code> は<b>0始まり</b>（1月=0）。実際の月は <code>+ 1</code>。</li>
+        <li><code>setDate</code> / <code>setMonth</code> で一部だけ書き換えて日付計算。存在しない日付は隣の月に繰り越される。</li>
+      </ul>
+    </div></div>
+  </article>
+
+  <!-- 9-d -->
+  <article class="chapter" id="c9d">
+    <span class="chapter__tag">Chapter 9-d</span>
+    <h2>RegExp — 正規表現</h2>
+    <p class="chapter__lead">文字列の「パターン」を検出し、置き換える。ただし深入り注意。</p>
+    <blockquote class="narration">
+      <p>最後の <em>RegExp</em> は Regular Expression の略で、<em>正規表現</em>を表すものです。何のために使うかというと、文字列の中から<em>特定のパターンを検出する</em>、もしくは<em>抜き出して置き換える</em>ためのものです。たとえば「メールアドレスを表す正規表現」——アットマークの前に何らかの文字列があって、その後ろに文字列とピリオドが続いて……というパターンを、正規表現という記法で表現できます。</p>
+      <p>ただ、先に言っておくと、今回の4つの中で<em>いちばん深入りするとやばい</em>のがこの正規表現です。試しに「メールアドレス 正規表現」で検索してみると、とても覚えられない長さのものが出てきます。笑っちゃうんですけど、私も覚えていません。今は AI に「こういう正規表現が欲しい」と言えば出してくれますから、<em>書き方を暗記する必要は全くありません</em>。「文字列のパターンを扱うときは正規表現が使える」と頭に入れておけば、基本的にはそれで十分です（じっくり見ると実はそんなに難しいことは書いていないので、興味があれば AI と話しながら読んでみると面白いですよ）。</p>
+      <p>実際に使ってみます。書き方が特殊で、<em>スラッシュで囲みます</em>。<code>/hello/i</code>——最後の <code>i</code> は「<em>大文字小文字を区別しない</em>」というフラグです。なのでこのパターンは <code>hello</code> も <code>Hello</code> も <code>hElLo</code> も検知できます。<code>pattern.test(文字列)</code> で、その文字列にパターンが<em>含まれるかどうか</em>を検証できます。<code>"Hello, world"</code> は true、<code>"goodbye"</code> は false ですね。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">src/main.ts</span></figcaption><div class="code-scroll"><pre><span class="c">// RegExp (Regular Expression): 正規表現</span>
+
+<span class="c">// hello, Hello, hElLo, ...</span>
+<span class="k">const</span> pattern = <span class="s">/hello/i</span>;
+
+console.<span class="f">log</span>(pattern.<span class="f">test</span>(<span class="s">&quot;Hello, world&quot;</span>));
+console.<span class="f">log</span>(pattern.<span class="f">test</span>(<span class="s">&quot;goodbye&quot;</span>));
+
+<span class="k">const</span> text = <span class="s">&quot;Typescript is great!&quot;</span>;
+<span class="k">const</span> replacedText = text.<span class="f">replace</span>(<span class="s">/typescript/i</span>, <span class="s">&quot;JavaScript&quot;</span>);
+
+console.<span class="f">log</span>(replacedText);</pre></div></figure>
+    <blockquote class="narration">
+      <p>検出だけでなく<em>置き換え</em>もできます。今度はパターンからではなく、<em>置き換えたい文字列の方から</em> <code>text.replace(検出するもの, 置き換え後)</code> と呼び出します。実は replace 自体は正規表現なしでも <code>text.replace("Typescript", "JavaScript")</code> のように普通の文字列で使えるのですが、検出する側を正規表現にすると<em>大文字小文字を無視して</em>検出・置換できます。コードの <code>/typescript/i</code> は小文字で書いていますが、<code>i</code> フラグのおかげで本文中の <code>Typescript</code> を検出して置き換えてくれます。ここが普通の文字列 <code>"typescript"</code> だったら、本文に小文字の typescript は存在しないので置き換わりません。</p>
+      <p>最後に1つ。Map も Set も Date も <code>new Map()</code> のように書いてきたのに、この <code>pattern</code> はどこにも <code>new</code> と書いていません。実はこの <code>/hello/i</code> というリテラル自体が <em>RegExp クラスのインスタンス</em>になっています。正規表現だけちょっと特殊で、<code>new RegExp(...)</code> と書かなくてもインスタンスが作られる仕様なんです。つまり Map・Set・Date、それに前回の Error も含めて、組み込みAPI は<em>「クラスのインスタンスを作って使う」仲間</em>だということです。</p>
+    </blockquote>
+    <figure class="code"><figcaption><span class="file">出力</span></figcaption><div class="code-scroll"><pre>true
+false
+JavaScript is great!</pre></div></figure>
+    <div class="point"><span class="label">POINT</span><div>
+      <ul>
+        <li>正規表現＝<b>文字列のパターン</b>を定義して、<code>test</code> で検出、<code>replace</code> で置換。</li>
+        <li><code>/hello/i</code> のようにスラッシュで囲む。<code>i</code> フラグで大文字小文字を無視。</li>
+        <li>複雑なパターンの<b>書き方は暗記不要</b>——調べる・AIに出してもらうでOK。「パターンには正規表現」とだけ覚える。</li>
+        <li><code>/…/</code> リテラルは <b>RegExp クラスのインスタンス</b>。組み込みAPIはどれも「クラスを使う」仲間。</li>
+      </ul>
+    </div></div>
+  </article>
+
+</main>
+
+</body>
+</html>
