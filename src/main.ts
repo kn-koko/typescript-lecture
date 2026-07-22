@@ -1,13 +1,15 @@
-const uniqueNumbers = new Set<number>();
+const now = new Date();
 
-uniqueNumbers.add(1);
-uniqueNumbers.add(2);
-uniqueNumbers.add(3);
+console.log(now.toISOString());
+console.log(now.toLocaleString("ja-JP"));
 
-console.log(uniqueNumbers);
-console.log(uniqueNumbers.has(1));
-console.log(uniqueNumbers.size);
+console.log(now.getFullYear());
+console.log(now.getMonth() + 1);
+console.log(now.getDate()); // 23
 
-for (const num of uniqueNumbers) {
-  console.log(num);
-}
+const futureDate = new Date();
+console.log(futureDate.toLocaleString("ja-JP"));
+futureDate.setDate(now.getDate() + 7);
+console.log(futureDate.toLocaleString("ja-JP"));
+futureDate.setMonth(3);
+console.log(futureDate.toLocaleString("ja-JP"));
